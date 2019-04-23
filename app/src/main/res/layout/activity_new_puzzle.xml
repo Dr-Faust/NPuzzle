@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".view.NewPuzzleActivity">
+
+	<com.google.android.material.appbar.AppBarLayout
+		android:id="@+id/toolbar_layout_new"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:theme="@style/BackToolbar">
+
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/toolbar_new"
+			android:layout_width="match_parent"
+			android:layout_height="?attr/actionBarSize"
+			app:popupTheme="@style/AppTheme.PopupOverlay"
+			app:title="Puzzle creation">
+
+		</androidx.appcompat.widget.Toolbar>
+
+	</com.google.android.material.appbar.AppBarLayout>
+
+	<androidx.core.widget.NestedScrollView
+		android:id="@+id/scroll_view_preview"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:fillViewport="true"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:gravity="center_horizontal"
+			android:orientation="vertical">
+
+			<GridLayout
+				android:id="@+id/new_container"
+				android:layout_margin="20dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+			</GridLayout>
+
+			<com.google.android.material.button.MaterialButton
+				android:id="@+id/btn_continue"
+				android:layout_width="120dp"
+				android:layout_height="wrap_content"
+				android:text="@string/btn_continue"
+				android:textAllCaps="false"/>
+
+		</LinearLayout>
+
+	</androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

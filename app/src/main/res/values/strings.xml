@@ -1,0 +1,10 @@
+<resources>
+	<string name="app_name">N-Puzzle</string>
+	<string name="btn_new_puzzle">New</string>
+	<string name="btn_random_puzzle">Random</string>
+	<string name="btn_load_puzzle">Load</string>
+	<string name="instruction">Touch the block you want to move. Good Luck :)</string>
+	<string name="btn_continue">Continue</string>
+	<string name="new_game">Shuffle</string>
+	<string name="solve">Solve</string>
+</resources>
