@@ -19,9 +19,10 @@ import butterknife.ButterKnife;
 
 public class StepsActivity extends BaseActivity implements View.OnClickListener {
 
-	@BindView(R.id.toolbar_steps)   Toolbar toolbar;
-//	@BindView(R.id.btn_to_first)    AppCompatImageButton btnToFirst;
-//	@BindView(R.id.btn_to_last)     AppCompatImageButton btnToLast;
+	@BindView(R.id.toolbar_steps)       Toolbar toolbar;
+	@BindView(R.id.viewpager_steps)     ViewPager viewPager;
+	@BindView(R.id.btn_to_first)        AppCompatImageButton btnToFirst;
+	@BindView(R.id.btn_to_last)         AppCompatImageButton btnToLast;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,9 @@ public class StepsActivity extends BaseActivity implements View.OnClickListener 
 
 		ButterKnife.bind(this);
 		toolbar.setNavigationOnClickListener(v -> onBackPressed());
+
+		btnToFirst.setOnClickListener(this);
+		btnToLast.setOnClickListener(this);
 
 		ArrayList<Integer> listMapsIntegers = getIntent().getIntegerArrayListExtra("list_maps");
 		int textSize = getIntent().getIntExtra("text_size", 24);
@@ -47,15 +51,15 @@ public class StepsActivity extends BaseActivity implements View.OnClickListener 
 		DisplayMetrics displaymetrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
-		ViewPager viewPager = findViewById(R.id.viewpager_steps);
+//		ViewPager viewPager = findViewById(R.id.viewpager_steps);
 		viewPager.setAdapter(new StepsPagerAdapter(this, listMaps, puzzleSize, textSize, displaymetrics.widthPixels));
 		RLogs.w("CURR ITEM = " + viewPager.getCurrentItem());
 
-		AppCompatImageButton btnToFirst = findViewById(R.id.btn_to_first);
-		AppCompatImageButton btnToLast = findViewById(R.id.btn_to_last);
+//		AppCompatImageButton btnToFirst = findViewById(R.id.btn_to_first);
+//		AppCompatImageButton btnToLast = findViewById(R.id.btn_to_last);
 
-		btnToFirst.setOnClickListener(this);
-		btnToLast.setOnClickListener(this);
+//		btnToFirst.setOnClickListener(this);
+//		btnToLast.setOnClickListener(this);
 	}
 
 	@Override

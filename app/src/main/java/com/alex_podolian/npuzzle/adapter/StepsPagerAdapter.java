@@ -41,13 +41,7 @@ public class StepsPagerAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup collection, int position) {
 
         LinearLayout container = new LinearLayout(context);
-        LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT);
-        containerParams.bottomMargin = 150;
-        container.setLayoutParams(containerParams);
-        collection.setLayoutParams(containerParams);
         container.setOrientation(LinearLayout.VERTICAL);
-        container.setBackgroundColor(context.getResources().getColor(R.color.backgroundColor));
 
         TextView titleText = new TextView(context);
         titleText.setText(getPageTitle(position));
@@ -59,7 +53,8 @@ public class StepsPagerAdapter extends PagerAdapter {
 
         container.addView(titleText);
         PuzzleBoardView puzzleBoardView = new PuzzleBoardView(context, puzzleSize, textSize, listMaps.get(position), null);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, screenWidth - 50);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
+        layoutParams.weight = 1;
         layoutParams.setMargins(37, 0, 37, 0);
         puzzleBoardView.setLayoutParams(layoutParams);
         container.addView(puzzleBoardView);
@@ -68,6 +63,7 @@ public class StepsPagerAdapter extends PagerAdapter {
             MaterialButton againBtn = new MaterialButton(context);
             againBtn.setText("New game");
             LinearLayout.LayoutParams btnLayoutParams = new LinearLayout.LayoutParams(300, LinearLayout.LayoutParams.WRAP_CONTENT);
+            btnLayoutParams.setMargins(0, 0, 0, 10);
             btnLayoutParams.gravity = Gravity.CENTER;
             againBtn.setLayoutParams(btnLayoutParams);
 
