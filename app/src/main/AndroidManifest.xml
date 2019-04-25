@@ -35,6 +35,11 @@
 			android:screenOrientation="portrait"
 			android:windowSoftInputMode="adjustResize"/>
 
+		<activity
+			android:name=".view.StepsActivity"
+			android:screenOrientation="portrait"
+			android:windowSoftInputMode="adjustResize"/>
+
 	</application>
 
 </manifest>

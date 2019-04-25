@@ -1,55 +1,73 @@
 package com.alex_podolian.npuzzle.view;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
-import com.alex_podolian.npuzzle.R;
-import com.alex_podolian.npuzzle.model.PuzzleBlock;
+import com.alex_podolian.npuzzle.model.PuzzleBoard;
+import com.alex_podolian.npuzzle.model.callbacks.OnComplete;
+import com.alex_podolian.npuzzle.model.callbacks.OnSolvePuzzle;
+import com.alex_podolian.npuzzle.presenter.Presenter;
 import com.alex_podolian.npuzzle.utils.RLogs;
-import com.alex_podolian.npuzzle.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 @SuppressLint("ViewConstructor")
-public class PuzzleBoardView extends View {
+public class PuzzleBoardView extends View implements OnSolvePuzzle {
 
 	private Context context;
+	private Presenter presenter;
+//	private int containerWidth;
 	private int puzzleSize;
 	private int textSize;
 	private int blockSize = 0;
-	private int[][] startMatrix;
-	private int[][] goalMatrix;
-	private PuzzleBlock[][] puzzleMatrix;
+	private ArrayList<Integer> startMap;
 	private Paint paint;
-	private Point emptyBlockIndex;
-	private int containerWidth = 0;
+	private PuzzleBoard puzzleBoard;
+	private ArrayList<PuzzleBoard> animation;
+	private OnComplete callback;
 
-	public PuzzleBoardView(Context context, int puzzleSize, int textSize, int[][] startMatrix) {
+	public PuzzleBoardView(Context context, int puzzleSize, int textSize, ArrayList<Integer> startMap, Presenter presenter) {
 		super(context);
 		this.context = context;
+		this.presenter = presenter;
 		this.puzzleSize = puzzleSize;
 		this.textSize = textSize;
-		this.startMatrix = startMatrix;
-		this.goalMatrix = Utils.makeSpiralMatrix(puzzleSize);
+		this.startMap = startMap;
+		animation = null;
 		paint = new Paint();
 		paint.setAntiAlias(true);
-		initEmptyBlockIndex();
 	}
+
+//	public PuzzleBoardView(Context context, PuzzleBoard puzzleBoard, ArrayList<Integer> puzzlFeMap, int puzzleSize) {
+//		super(context);
+//		this.context = context;
+//		this.puzzleBoard = puzzleBoard;
+//		this.puzzleSize = puzzleSize;
+//		animation = null;
+//		paint = new Paint();
+//		paint.setAntiAlias(true);
+//	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		for (int i = 0; i < puzzleSize; i++) {
-			for (int j = 0; j < puzzleSize; j++) {
-				puzzleMatrix[i][j].onDraw(canvas, paint);
+		if (puzzleBoard != null) {
+			if (animation != null && animation.size() > 0) {
+				puzzleBoard = animation.remove(0);
+				puzzleBoard.onDraw(canvas, paint);
+				if (animation.size() == 0) {
+					animation = null;
+					Toast.makeText(context, "Solved!", Toast.LENGTH_LONG).show();
+				} else {
+					this.postInvalidateDelayed(300);
+				}
+			} else {
+				puzzleBoard.onDraw(canvas, paint);
 			}
 		}
 	}
@@ -57,152 +75,67 @@ public class PuzzleBoardView extends View {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		containerWidth = getMeasuredWidth();
+		initView(getMeasuredWidth());
+	}
+
+	public void initView(int containerWidth) {
+//		this.containerWidth = containerWidth;
+//		RLogs.w("CONTAINER WIDTH = " + containerWidth);
 		if (containerWidth == 0) {
 			return;
 		}
-		initPuzzleBoard();
-	}
-
-	private void initEmptyBlockIndex() {
-		for (int i = 0; i < puzzleSize; i++) {
-			for (int j = 0; j < puzzleSize; j++) {
-				if (startMatrix[i][j] == 0) {
-					emptyBlockIndex = new Point(i, j);
-				}
-			}
-		}
-	}
-
-	private void initPuzzleBoard() {
-		puzzleMatrix = new PuzzleBlock[puzzleSize][puzzleSize];
-		int x = 0;
-		int y = 0;
 		blockSize = containerWidth / puzzleSize;
-		for (int i = 0; i < puzzleSize; i++) {
-			for (int j = 0; j < puzzleSize; j++) {
-				puzzleMatrix[i][j] = new PuzzleBlock(context, startMatrix[i][j], x, y, blockSize, textSize);
-				x += blockSize;
-			}
-			x = 0;
-			y += blockSize;
+		if (animation == null || animation.size() < 1) {
+//			RLogs.w("START MAP = " + startMap);
+			puzzleBoard = new PuzzleBoard(context, puzzleSize, textSize, startMap, blockSize);
 		}
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (event != null) {
-			switch(event.getAction()) {
-				case MotionEvent.ACTION_DOWN:
-					RLogs.d("Event down: " + event.getX() + ":" + event.getY());
-					return true;
-				case MotionEvent.ACTION_UP:
-					if (blockSize == 0) {
-						return false;
-					}
-					int i = (int) (event.getY() / blockSize);
-					int j = (int) (event.getX() / blockSize);
-
-					if (i + 1 < puzzleSize && i + 1 == emptyBlockIndex.x && j == emptyBlockIndex.y) {
-						makeMove(i, j);
-					} else if (i - 1 >= 0 && i - 1 == emptyBlockIndex.x && j == emptyBlockIndex.y) {
-						makeMove(i, j);
-					} else if (j + 1 < puzzleSize && i == emptyBlockIndex.x && j + 1 == emptyBlockIndex.y) {
-						makeMove(i, j);
-					} else if (j - 1 >= 0 && i == emptyBlockIndex.x && j - 1 == emptyBlockIndex.y) {
-						makeMove(i, j);
-					}
-					RLogs.d("Event up: " + event.getX() + ":" + event.getY());
-			}
-
+		switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				return true;
+			case MotionEvent.ACTION_UP:
+				if (blockSize == 0) {
+					return false;
+				}
+				int j = (int) (event.getY() / blockSize);
+				int i = (int) (event.getX() / blockSize);
+				puzzleBoard.onTouch(i, j);
+				invalidate();
 		}
-
 		return super.onTouchEvent(event);
 	}
 
-	private void makeMove(int i, int j) {
-		swapBlock(i, j);
-		invalidate();
-		if (isSolution()) {
-			new AlertDialog.Builder(context, R.style.DialogTheme)
-				.setTitle("Congratulations!")
-				.setCancelable(false)
-				.setMessage("You made it!")
-				.setPositiveButton("Continue", (dialog, which) -> {
-					Intent intent = new Intent(context, MainActivity.class);
-					context.startActivity(intent);
-					invalidate();
-					dialog.dismiss();
-				})
-				.show();
-		}
-	}
-
-	private void swapBlock(int i, int j) {
-		int id = puzzleMatrix[i][j].getId();
-		puzzleMatrix[i][j].setId(0);
-		puzzleMatrix[emptyBlockIndex.x][emptyBlockIndex.y].setId(id);
-		emptyBlockIndex = new Point(i, j);
-	}
-
-	private boolean isSolution() {
-		int count = 1;
-		for (int i = 0; i < puzzleSize; i++) {
-			for (int j = 0; j < puzzleSize; j++) {
-				if (puzzleMatrix[i][j].getId() != count && count != puzzleSize * puzzleSize) {
-					return false;
-				}
-				count++;
-			}
-		}
-		return true;
-	}
-
 	public void shuffleBoard() {
-		for (int i = 0; i < 100; i++) {
-			ArrayList<Point> options = new ArrayList<>();
-			if (emptyBlockIndex.x + 1 < puzzleSize) {
-				options.add(new Point(emptyBlockIndex.x + 1, emptyBlockIndex.y));
-			}
-			if (emptyBlockIndex.x - 1 >= 0) {
-				options.add(new Point(emptyBlockIndex.x - 1, emptyBlockIndex.y));
-			}
-			if (emptyBlockIndex.y + 1 < puzzleSize) {
-				options.add(new Point(emptyBlockIndex.x, emptyBlockIndex.y + 1));
-			}
-			if (emptyBlockIndex.y - 1 >= 0) {
-				options.add(new Point(emptyBlockIndex.x, emptyBlockIndex.y - 1));
-			}
-			Collections.shuffle(options);
-			Point selectedPoint = options.get(0);
-			swapBlock(selectedPoint.x, selectedPoint.y);
+		if (animation == null && puzzleBoard != null) {
+			puzzleBoard.shuffleBoard();
+		} else if (animation != null && animation.size() > 0) {
+			Toast.makeText(context, "Come on!! it's in solving process!", Toast.LENGTH_LONG).show();
 		}
 	}
 
-	public int hamming() {
-		int count = 0;
-		for (int i = 0; i < puzzleSize; i++) {
-			for (int j = 0; j < puzzleSize; j++) {
-				if (startMatrix[i][j] != 0 && startMatrix[i][j] != goalMatrix[i][j]) {
-					count++;
-				}
-			}
+	public void solve(OnComplete callback) {
+		if (animation != null && animation.size() > 0 || puzzleBoard == null) {
+			Toast.makeText(context, "Wait! It's already in process.", Toast.LENGTH_LONG).show();
+			callback.onCompleted(null);
+			return;
 		}
-		return count;
+		if (puzzleBoard.isGoal()){
+			Toast.makeText(context, "It's already solved! Shuffle it!", Toast.LENGTH_LONG).show();
+			callback.onCompleted(null);
+			return;
+		}
+		this.callback = callback;
+		presenter.solvePuzzle(puzzleBoard, this);
 	}
 
-	public int manhattan() {
-		int count = 0;
-		for (int i = 0; i < puzzleSize; i++) {
-			for (int j = 0; j < puzzleSize; j++) {
-				if (startMatrix[i][j] != 0 && startMatrix[i][j] != goalMatrix[i][j]) {
-					int dx = (goalMatrix[i][j] - 1) / puzzleSize;
-					int dy = goalMatrix[i][j] - 1 - dx * puzzleSize;
-					count += Math.abs(i - dx) + Math.abs(j - dy);
-				}
-			}
-		}
-		return count;
+	@Override
+	public void onPuzzleSolved(ArrayList<PuzzleBoard> steps) {
+		animation = steps;
+		invalidate();
+		callback.onCompleted(steps);
 	}
 }

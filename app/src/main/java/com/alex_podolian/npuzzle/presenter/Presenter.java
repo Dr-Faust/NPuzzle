@@ -13,7 +13,9 @@ import android.widget.Toast;
 
 import com.alex_podolian.npuzzle.R;
 import com.alex_podolian.npuzzle.model.Model;
+import com.alex_podolian.npuzzle.model.PuzzleBoard;
 import com.alex_podolian.npuzzle.model.callbacks.OnCreateMap;
+import com.alex_podolian.npuzzle.model.callbacks.OnSolvePuzzle;
 import com.alex_podolian.npuzzle.utils.Utils;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -72,5 +74,9 @@ public class Presenter {
 
 	public void createMap(int puzzleSize, OnCreateMap callback, Context context) {
 		model.createMap(puzzleSize, callback, context);
+	}
+
+	public void solvePuzzle(PuzzleBoard puzzleBoard, OnSolvePuzzle callback) {
+		model.solvePuzzle(puzzleBoard, callback);
 	}
 }

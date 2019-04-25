@@ -26,15 +26,26 @@ public class Utils {
         return textSize;
     }
 
-    private static int[][] createMapMatrix(ArrayList<Integer> map, int puzzleSize) {
+    public static int[][] ArrayToMatrix(ArrayList<Integer> arr, int puzzleSize) {
         int[][] mapMatrix = new int[puzzleSize][puzzleSize];
         int index = 0;
         for (int i = 0; i < puzzleSize; i++) {
             for (int j = 0; j < puzzleSize; j++) {
-                mapMatrix[i][j] = map.get(index++);
+                mapMatrix[i][j] = arr.get(index++);
             }
         }
         return mapMatrix;
+    }
+
+    public static ArrayList<Integer> MatrixToArray(int[][] matrix, int puzzleSize) {
+        ArrayList<Integer> arr = new ArrayList<>(puzzleSize * puzzleSize);
+        int index = 0;
+        for (int i = 0; i < puzzleSize; i++) {
+            for (int j = 0; j < puzzleSize; j++) {
+                arr.add(matrix[i][j]);
+            }
+        }
+        return arr;
     }
 
     public static int[][] makeSpiralMatrix(int puzzleSize) {
@@ -94,41 +105,54 @@ public class Utils {
         return spiralMap;
     }
 
-    private static Point swapNode(int i, int j, int[][] matrix, Point emptyNodeIndex) {
-        int id = matrix[i][j];
-        matrix[i][j] = 0;
-        matrix[emptyNodeIndex.x][emptyNodeIndex.y] = id;
-        emptyNodeIndex = new Point(i, j);
-        return emptyNodeIndex;
+    private static void swapNodes(int i, int j, ArrayList<Integer> puzzleMap) {
+        int id = puzzleMap.get(j);
+        puzzleMap.set(j, puzzleMap.get(i));
+        puzzleMap.set(i, id);
     }
 
-    public static int[][] shuffleMatrix(int[][] matrix, int puzzleSize) {
-        Point emptyNodeIndex = new Point(0, 0);
-        for (int i = 0; i < puzzleSize; i++) {
-            for (int j = 0; j < puzzleSize; j++) {
-                if (matrix[i][j] == 0) {
-                    emptyNodeIndex = new Point(i, j);
-                }
+
+    private static Point getEmptyPoint(ArrayList<Integer> puzzleMap, int puzzleSize) {
+        int emptyX = 0;
+        int emptyY = 0;
+        for(int i = 0; i < puzzleSize * puzzleSize; i++) {
+            if(puzzleMap.get(i) == 0) {
+                emptyX = i % puzzleSize;
+                emptyY = i / puzzleSize;
+                break;
             }
         }
-        for (int i = 0; i < 100; i++) {
+        return new Point(emptyX, emptyY);
+    }
+
+    public static ArrayList<Integer> shuffleMap(ArrayList<Integer> puzzleMap, int puzzleSize) {
+
+        for (int i = 0; i < 300; i++) {
             ArrayList<Point> options = new ArrayList<>();
-            if (emptyNodeIndex.x + 1 < puzzleSize) {
-                options.add(new Point(emptyNodeIndex.x + 1, emptyNodeIndex.y));
+            int emptyX = getEmptyPoint(puzzleMap, puzzleSize).x;
+            int emptyY = getEmptyPoint(puzzleMap, puzzleSize).y;
+
+            if (emptyX+ 1 < puzzleSize) {
+                options.add(new Point(emptyX + 1, emptyY));
             }
-            if (emptyNodeIndex.x - 1 >= 0) {
-                options.add(new Point(emptyNodeIndex.x - 1, emptyNodeIndex.y));
+            if (emptyX - 1 >= 0) {
+                options.add(new Point(emptyX - 1, emptyY));
             }
-            if (emptyNodeIndex.y + 1 < puzzleSize) {
-                options.add(new Point(emptyNodeIndex.x, emptyNodeIndex.y + 1));
+            if (emptyY + 1 < puzzleSize) {
+                options.add(new Point(emptyX, emptyY + 1));
             }
-            if (emptyNodeIndex.y - 1 >= 0) {
-                options.add(new Point(emptyNodeIndex.x, emptyNodeIndex.y - 1));
+            if (emptyY - 1 >= 0) {
+                options.add(new Point(emptyX, emptyY - 1));
             }
             Collections.shuffle(options);
             Point selectedPoint = options.get(0);
-            emptyNodeIndex = swapNode(selectedPoint.x, selectedPoint.y, matrix, emptyNodeIndex);
+            swapNodes(xyToIndex(selectedPoint.x, selectedPoint.y, puzzleSize),
+                xyToIndex(emptyX, emptyY, puzzleSize), puzzleMap);
         }
-        return matrix;
+        return puzzleMap;
+    }
+
+    public static int xyToIndex(int x, int y, int puzzleSize) {
+        return x + y * puzzleSize;
     }
 }

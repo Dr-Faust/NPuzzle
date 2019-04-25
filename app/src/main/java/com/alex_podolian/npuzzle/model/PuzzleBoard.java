@@ -1,163 +1,267 @@
-//package com.alex_podolian.npuzzle.model;
-//
-//import android.graphics.Bitmap;
-//import android.graphics.Canvas;
-//
-//import java.util.ArrayList;
-//
-//
-//public class PuzzleBoard {
-//
-//    private int puzzleSize;
-//    private static final int[][] NEIGHBOUR_COORDINATES = {
-//            {-1, 0},
-//            {1, 0},
-//            {0, -1},
-//            {0, 1}
-//    };
-//    private ArrayList<PuzzleBlock> blocks;
-//    private PuzzleBoard previousBoard;
-//    private int stepNumber = 0;
-//
-//    PuzzleBoard(Bitmap bitmap, int parentWidth) {
-//        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,parentWidth,parentWidth,true);
-//        int tileWidth = scaledBitmap.getWidth()/ puzzleSize;
-//        blocks = new ArrayList<>();
-//        for (int i = 0; i < puzzleSize; i++) {
-//            for (int j = 0; j < puzzleSize; j++) {
-//                int tileNumber = i * puzzleSize + j;
-//                if (tileNumber != puzzleSize * puzzleSize - 1){
-//                    Bitmap tileBitmap = Bitmap.createBitmap(scaledBitmap, j*tileWidth, i*tileWidth, tileWidth, tileWidth);
-//                    PuzzleTile tile = new PuzzleTile(tileBitmap, tileNumber);
-//                    blocks.add(tile);
-//                }
-//                else{
-//                    blocks.add(null);
-//                }
-//            }
+package com.alex_podolian.npuzzle.model;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+
+import androidx.annotation.NonNull;
+
+import com.alex_podolian.npuzzle.utils.Utils;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
+
+public class PuzzleBoard {
+
+    private static final int[][] NEIGHBOUR_COORDINATES = {
+        {-1, 0},
+        {1, 0},
+        {0, -1},
+        {0, 1}
+    };
+
+    private Context context;
+    private int textSize;
+    private int blockSize;
+    private int puzzleSize;
+    private ArrayList<PuzzleBlock> puzzleBlocksArr;
+    private ArrayList<Integer> puzzleMap;
+    private ArrayList<Integer> goalMap;
+    private PuzzleBoard previousBoard;
+    private int stepNumber = 0;
+
+    public PuzzleBoard(Context context, int puzzleSize, int textSize, ArrayList<Integer> puzzleMap, int blockSize) {
+        this.context = context;
+        this.textSize = textSize;
+        this.blockSize = blockSize;
+        this.puzzleSize = puzzleSize;
+        goalMap = Utils.makeSpiralMap(puzzleSize);
+        this.puzzleMap = puzzleMap;
+        initPuzzleMatrix(blockSize, textSize);
+    }
+
+    private void initPuzzleMatrix(int blockSize, int textSize) {
+        puzzleBlocksArr = new ArrayList<>();
+	    int id;
+        for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+	        id = puzzleMap.get(i);
+	        PuzzleBlock puzzleBlock = new PuzzleBlock(context, id, (i % puzzleSize) * blockSize,
+		        (i / puzzleSize) * blockSize, blockSize, textSize);
+	        puzzleBlocksArr.add(puzzleBlock);
+
+
+//                PuzzleBlock puzzleBlock = new PuzzleBlock(context, startMatrix[i][j], x, y, blockSize, textSize);
+//                puzzleBlocksArr.add(puzzleBlock);
+        }
+    }
+
+    private Point getEmptyBlockPoint() {
+        int emptyX = 0;
+        int emptyY = 0;
+        for(int i = 0; i < puzzleSize * puzzleSize; i++) {
+            if(puzzleMap.get(i) == 0) {
+                emptyX = i % puzzleSize;
+                emptyY = i / puzzleSize;
+                break;
+            }
+        }
+        return new Point(emptyX, emptyY);
+    }
+
+    public PuzzleBoard getPreviousBoard() {
+        return previousBoard;
+    }
+
+    public void setPreviousBoard(PuzzleBoard previousBoard) {
+        this.previousBoard = previousBoard;
+    }
+
+    public ArrayList<Integer> getPuzzleMap() {
+        return puzzleMap;
+    }
+
+    public ArrayList<PuzzleBlock> getPuzzleBlocks() {
+        return puzzleBlocksArr;
+    }
+
+    public int getStepNumber() {
+        return stepNumber;
+    }
+
+    private PuzzleBoard(PuzzleBoard previousBoard, int stepNumber) {
+        this.context = previousBoard.context;
+        this.textSize = previousBoard.textSize;
+        this.blockSize = previousBoard.blockSize;
+        this.puzzleSize = previousBoard.puzzleSize;
+        this.goalMap = previousBoard.goalMap;
+        this.previousBoard = previousBoard;
+        this.stepNumber = stepNumber + 1;
+        this.puzzleMap = new ArrayList<>(previousBoard.puzzleMap);
+        this.puzzleBlocksArr = new ArrayList<>();
+        int id;
+        for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+            id = previousBoard.puzzleMap.get(i);
+            PuzzleBlock puzzleBlock = new PuzzleBlock(context, id, (i % puzzleSize) * blockSize,
+                (i / puzzleSize) * blockSize, blockSize, textSize);
+            puzzleBlocksArr.add(puzzleBlock);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return puzzleMap.equals(((PuzzleBoard) o).puzzleMap);
+    }
+
+    public void onDraw(@NonNull Canvas canvas, @NonNull Paint paint) {
+        if (puzzleBlocksArr == null) {
+            return;
+        }
+        for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+            if (puzzleBlocksArr.get(i) != null) {
+                puzzleBlocksArr.get(i).onDraw(canvas, paint);
+            }
+        }
+    }
+
+    public void onTouch(int i, int j) {
+        Point emptyPoint = getEmptyBlockPoint();
+
+        if (i + 1 < puzzleSize && i + 1 == emptyPoint.x && j == emptyPoint.y) {
+            makeMove(i, j, emptyPoint.x, emptyPoint.y);
+        } else if (i - 1 >= 0 && i - 1 == emptyPoint.x && j == emptyPoint.y) {
+            makeMove(i, j, emptyPoint.x, emptyPoint.y);
+        } else if (j + 1 < puzzleSize && i == emptyPoint.x && j + 1 == emptyPoint.y) {
+            makeMove(i, j, emptyPoint.x, emptyPoint.y);
+        } else if (j - 1 >= 0 && i == emptyPoint.x && j - 1 == emptyPoint.y) {
+            makeMove(i, j, emptyPoint.x, emptyPoint.y);
+        }
+    }
+
+    private void makeMove(int i, int j, int emptyX, int emptyY) {
+        swapBlocks(Utils.xyToIndex(i, j, puzzleSize),
+            Utils.xyToIndex(emptyX, emptyY, puzzleSize));
+//        if (isGoal()) {
+//            new AlertDialog.Builder(context, R.style.DialogTheme)
+//                .setTitle("Congratulations!")
+//                .setCancelable(false)
+//                .setMessage("You made it!")
+//                .setPositiveButton("Continue", (dialog, which) -> {
+//                    Intent intent = new Intent(context, MainActivity.class);
+//                    context.startActivity(intent);
+//                    dialog.dismiss();
+//                }).show();
 //        }
-//    }
-//
-//    public PuzzleBoard getPreviousBoard() {
-//        return previousBoard;
-//    }
-//
-//    public void setPreviousBoard(PuzzleBoard previousBoard) {
-//        this.previousBoard = previousBoard;
-//    }
-//
-//    PuzzleBoard(PuzzleBoard otherBoard, int stepNumber) {
-//        blocks = (ArrayList<PuzzleTile>) otherBoard.blocks.clone();
-//        previousBoard = otherBoard;
-//        this.stepNumber = stepNumber + 1;
-//    }
-//
-//    public void reset() {
-//        // Nothing for now but you may have things to reset once you implement the solver.
-//    }
-//
-//    @Override
-//    public boolean equals(Object o) {
-//        if (o == null)
-//            return false;
-//        return blocks.equals(((PuzzleBoard) o).blocks);
-//    }
-//
-//    public void draw(Canvas canvas) {
-//        if (blocks == null) {
-//            return;
-//        }
-//        for (int i = 0; i < puzzleSize * puzzleSize; i++) {
-//            PuzzleTile tile = blocks.get(i);
-//            if (tile != null) {
-//                tile.draw(canvas, i % puzzleSize, i / puzzleSize);
-//            }
-//        }
-//    }
-//
-//    public boolean click(float x, float y) {
-//        for (int i = 0; i < puzzleSize * puzzleSize; i++) {
-//            PuzzleTile tile = blocks.get(i);
-//            if (tile != null) {
-//                if (tile.isClicked(x, y, i % puzzleSize, i / puzzleSize)) {
-//                    return tryMoving(i % puzzleSize, i / puzzleSize);
-//                }
-//            }
-//        }
-//        return false;
-//    }
-//
-//    public boolean resolved() {
-//        for (int i = 0; i < puzzleSize * puzzleSize - 1; i++) {
-//            PuzzleTile tile = blocks.get(i);
-//            if (tile == null || tile.getNumber() != i)
-//                return false;
-//        }
-//        return true;
-//    }
-//
-//    private int XYtoIndex(int x, int y) {
-//        return x + y * puzzleSize;
-//    }
-//
-//    protected void swapTiles(int i, int j) {
-//        PuzzleTile temp = blocks.get(i);
-//        blocks.set(i, blocks.get(j));
-//        blocks.set(j, temp);
-//    }
-//
-//    private boolean tryMoving(int tileX, int tileY) {
-//        for (int[] delta : NEIGHBOUR_COORDINATES) {
-//            int nullX = tileX + delta[0];
-//            int nullY = tileY + delta[1];
-//            if (nullX >= 0 && nullX < puzzleSize && nullY >= 0 && nullY < puzzleSize &&
-//                    blocks.get(XYtoIndex(nullX, nullY)) == null) {
-//                swapTiles(XYtoIndex(nullX, nullY), XYtoIndex(tileX, tileY));
-//                return true;
-//            }
-//
-//        }
-//        return false;
-//    }
-//
-//    public ArrayList<PuzzleBoard> neighbours() {
-//        ArrayList<PuzzleBoard> result = new ArrayList<>();
-//        int emptyTileX = 0;
-//        int emptyTileY = 0;
-//        for(int i = 0; i< puzzleSize * puzzleSize; i++){
-//            if(blocks.get(i) == null){
-//                emptyTileX = i % puzzleSize;
-//                emptyTileY = i / puzzleSize;
-//                break;
-//            }
-//        }
-//        for(int[] coordinates : NEIGHBOUR_COORDINATES){
-//            int neighbourX = emptyTileX + coordinates[0];
-//            int neighbourY = emptyTileY + coordinates[1];
-//            if(neighbourX >= 0 && neighbourX < puzzleSize && neighbourY >= 0 && neighbourY < puzzleSize){
-//                PuzzleBoard neighbourBoard = new PuzzleBoard(this, stepNumber);
-//                neighbourBoard.swapTiles((XYtoIndex(neighbourX,neighbourY)),XYtoIndex(emptyTileX,emptyTileY));
-//                result.add(neighbourBoard);
-//            }
-//        }
-//        return result;
-//    }
-//
-//    public int priority() {
-//        int manhattanDistance = 0;
-//        for(int i = 0; i < puzzleSize * puzzleSize; i++){
-//            PuzzleTile tile = blocks.get(i);
-//            if(tile != null){
-//                int correctPosition = tile.getNumber();
-//                int correctX = correctPosition % puzzleSize;
-//                int correctY = correctPosition / puzzleSize;
-//                int currentX = i % puzzleSize;
-//                int currentY = i / puzzleSize;
-//
-//                manhattanDistance += Math.abs(currentX - correctX) + Math.abs(currentY - correctY);
-//            }
-//        }
-//        return manhattanDistance + stepNumber;
-//    }
-//
-//}
+    }
+
+    public void shuffleBoard() {
+        for (int i = 0; i < 300; i++) {
+            ArrayList<Point> options = new ArrayList<>();
+            int emptyX = getEmptyBlockPoint().x;
+            int emptyY = getEmptyBlockPoint().y;
+
+            if (emptyX+ 1 < puzzleSize) {
+                options.add(new Point(emptyX + 1, emptyY));
+            }
+            if (emptyX - 1 >= 0) {
+                options.add(new Point(emptyX - 1, emptyY));
+            }
+            if (emptyY + 1 < puzzleSize) {
+                options.add(new Point(emptyX, emptyY + 1));
+            }
+            if (emptyY - 1 >= 0) {
+                options.add(new Point(emptyX, emptyY - 1));
+            }
+            Collections.shuffle(options);
+            Point selectedPoint = options.get(0);
+            swapBlocks(Utils.xyToIndex(selectedPoint.x, selectedPoint.y, puzzleSize),
+                Utils.xyToIndex(emptyX, emptyY, puzzleSize));
+        }
+    }
+
+    private void swapBlocks(int i, int j) {
+        int id = puzzleBlocksArr.get(j).getId();
+        puzzleBlocksArr.get(j).setId(puzzleBlocksArr.get(i).getId());
+        puzzleBlocksArr.get(i).setId(id);
+
+        id = puzzleMap.get(j);
+        puzzleMap.set(j, puzzleMap.get(i));
+        puzzleMap.set(i, id);
+    }
+
+    public Iterable<PuzzleBoard> neighbours() {
+        ArrayList<PuzzleBoard> result = new ArrayList<>();
+        int emptyBlockX = 0;
+        int emptyBlockY = 0;
+        for(int i = 0; i < puzzleSize * puzzleSize; i++) {
+            if(puzzleMap.get(i) == 0) {
+                emptyBlockX = i % puzzleSize;
+                emptyBlockY = i / puzzleSize;
+                break;
+            }
+        }
+        for (int[] coordinates : NEIGHBOUR_COORDINATES) {
+            int neighbourX = emptyBlockX + coordinates[0];
+            int neighbourY = emptyBlockY + coordinates[1];
+            if (neighbourX >= 0 && neighbourX < puzzleSize && neighbourY >= 0 && neighbourY < puzzleSize) {
+                PuzzleBoard neighbourBoard = new PuzzleBoard(this, stepNumber);
+                neighbourBoard.swapBlocks((Utils.xyToIndex(neighbourX, neighbourY, puzzleSize)),
+                    Utils.xyToIndex(emptyBlockX, emptyBlockY, puzzleSize));
+                result.add(neighbourBoard);
+            }
+        }
+        return result;
+    }
+
+    public boolean isGoal()  {
+        return puzzleMap.equals(goalMap);
+    }
+
+    public int hamming() {
+        int count = 0;
+        for(Integer node : puzzleMap) {
+            if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
+                count++;
+            }
+        }
+//        RLogs.w("HAMMING = " + count);
+        return count;
+    }
+
+    public int manhattan() {
+        int distance = 0;
+        
+        for(Integer node : puzzleMap) {
+            if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
+                int xGoal = goalMap.indexOf(node) / puzzleSize;
+                int yGoal = goalMap.indexOf(node) % puzzleSize;
+                int xCurrent = puzzleMap.indexOf(node) / puzzleSize;
+                int yCurrent = puzzleMap.indexOf(node) % puzzleSize;
+                distance += abs(xGoal - xCurrent) + abs(yGoal - yCurrent);
+            }
+        }
+//        RLogs.w("MANHATTAN = " + manhattanDistance);
+//        RLogs.w("STEP NUMBER = " + stepNumber);
+        return distance;
+    }
+
+    public int euclidean() {
+        int distance = 0;
+
+        for(Integer node : puzzleMap) {
+            if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
+                int xGoal = goalMap.indexOf(node) / puzzleSize;
+                int yGoal = goalMap.indexOf(node) % puzzleSize;
+                int xCurrent = puzzleMap.indexOf(node) / puzzleSize;
+                int yCurrent = puzzleMap.indexOf(node) % puzzleSize;
+                distance += sqrt(pow((xGoal - xCurrent), 2) + pow((yGoal - yCurrent), 2));
+            }
+        }
+//        RLogs.w("MANHATTAN = " + manhattanDistance);
+//        RLogs.w("STEP NUMBER = " + stepNumber);
+        return distance;
+    }
+}

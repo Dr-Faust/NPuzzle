@@ -5,8 +5,8 @@
 	<color name="primaryDarkColor">#003d00</color>
 	<color name="primaryTextColor">#000000</color>
 	<color name="white">#FFFFFF</color>
-	<color name="backgroundColor">#f1f8e9</color>
-	<color name="blockColor">#aed581</color>
+	<color name="backgroundColor">#66f1f8e9</color>
+	<color name="blockColor">#99aed581</color>
 
 	<color name="gameBackground">#FAFAFA</color>
 	<color name="puzzleBlock">#BBDEFB</color>

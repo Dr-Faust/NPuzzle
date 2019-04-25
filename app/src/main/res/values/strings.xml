@@ -5,6 +5,7 @@
 	<string name="btn_load_puzzle">Load</string>
 	<string name="instruction">Touch the block you want to move. Good Luck :)</string>
 	<string name="btn_continue">Continue</string>
-	<string name="new_game">Shuffle</string>
-	<string name="solve">Solve</string>
+	<string name="btn_shuffle">Shuffle</string>
+	<string name="btn_show_steps">Show steps</string>
+	<string name="btn_solve">Solve</string>
 </resources>
