@@ -3,7 +3,6 @@ package com.alex_podolian.npuzzle.view;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,6 +14,7 @@ import com.alex_podolian.npuzzle.model.PuzzleBoard;
 import com.alex_podolian.npuzzle.model.callbacks.OnComplete;
 import com.alex_podolian.npuzzle.utils.Utils;
 import com.alex_podolian.npuzzle.utils.Validator;
+import com.alex_podolian.npuzzle.view.custom_views.PuzzleBoardView;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -57,15 +57,11 @@ public class PuzzleActivity extends BaseActivity implements View.OnClickListener
 		map = getIntent().getIntegerArrayListExtra("map");
 
 		if (option.equals("new")) {
-			puzzleBoardView = new PuzzleBoardView(this, puzzleSize, textSize, map, presenter);
+			puzzleBoardView = new PuzzleBoardView(this, puzzleSize, textSize, map, presenter, true);
 		} else if (option.equals("random")){
 			puzzleBoardView = new PuzzleBoardView(this, puzzleSize, textSize,
-				Utils.shuffleMap(map, puzzleSize), presenter);
+				Utils.shuffleMap(map, puzzleSize), presenter, true);
 		}
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-		puzzleBoardView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,
-			displaymetrics.widthPixels - 50));
 		clPuzzleContainer.addView(puzzleBoardView);
 	}
 
@@ -82,8 +78,7 @@ public class PuzzleActivity extends BaseActivity implements View.OnClickListener
 					progressDialog = new ProgressDialog(this);
 					progressDialog.setMessage("Solving...");
 					progressDialog.setCancelable(false);
-					progressDialog.show();
-					puzzleBoardView.solve(this);
+					presenter.selectHeuristic(progressDialog, puzzleBoardView,this, this);
 				} else {
 					Toast.makeText(this, "Puzzle is unsolvable! Please shuffle.", Toast.LENGTH_SHORT).show();
 				}

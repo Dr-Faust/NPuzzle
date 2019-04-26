@@ -14,7 +14,7 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.alex_podolian.npuzzle.R;
 import com.alex_podolian.npuzzle.view.MainActivity;
-import com.alex_podolian.npuzzle.view.PuzzleBoardView;
+import com.alex_podolian.npuzzle.view.custom_views.PuzzleBoardView;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -25,15 +25,13 @@ public class StepsPagerAdapter extends PagerAdapter {
     private ArrayList<ArrayList<Integer>> listMaps;
     private int puzzleSize;
     private int textSize;
-    private int screenWidth;
 
     public StepsPagerAdapter(Context context, ArrayList<ArrayList<Integer>> listMaps,
-                             int puzzleSize, int textSize, int screenWidth) {
+                             int puzzleSize, int textSize) {
         this.context = context;
         this.listMaps = listMaps;
         this.puzzleSize = puzzleSize;
         this.textSize = textSize;
-        this.screenWidth = screenWidth;
     }
 
     @NonNull
@@ -46,13 +44,14 @@ public class StepsPagerAdapter extends PagerAdapter {
         TextView titleText = new TextView(context);
         titleText.setText(getPageTitle(position));
         titleText.setTextSize(32);
-        titleText.setTextColor(context.getResources().getColor(R.color.primaryDarkColor));
+        titleText.setTextColor(context.getResources().getColor(R.color.primaryColor));
         titleText.setPadding(20, 23, 20, 27);
         titleText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         titleText.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 
         container.addView(titleText);
-        PuzzleBoardView puzzleBoardView = new PuzzleBoardView(context, puzzleSize, textSize, listMaps.get(position), null);
+        PuzzleBoardView puzzleBoardView = new PuzzleBoardView(context, puzzleSize, textSize,
+            listMaps.get(position), null, false);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
         layoutParams.weight = 1;
         layoutParams.setMargins(37, 0, 37, 0);
@@ -62,8 +61,9 @@ public class StepsPagerAdapter extends PagerAdapter {
         if (position == listMaps.size() - 1) {
             MaterialButton againBtn = new MaterialButton(context);
             againBtn.setText("New game");
-            LinearLayout.LayoutParams btnLayoutParams = new LinearLayout.LayoutParams(300, LinearLayout.LayoutParams.WRAP_CONTENT);
-            btnLayoutParams.setMargins(0, 0, 0, 10);
+            LinearLayout.LayoutParams btnLayoutParams = new LinearLayout.LayoutParams(300,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+            btnLayoutParams.setMargins(0, 0, 0, 30);
             btnLayoutParams.gravity = Gravity.CENTER;
             againBtn.setLayoutParams(btnLayoutParams);
 

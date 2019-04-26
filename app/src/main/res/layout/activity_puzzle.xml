@@ -68,19 +68,21 @@
 
 			<androidx.constraintlayout.widget.ConstraintLayout
 				android:id="@+id/cl_puzzle_container"
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="1"
 				android:layout_marginTop="10dp"
 				android:layout_marginStart="20dp"
-				android:layout_marginEnd="20dp"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content">
+				android:layout_marginEnd="20dp">
 			</androidx.constraintlayout.widget.ConstraintLayout>
 
 			<com.google.android.material.button.MaterialButton
 				android:id="@+id/btn_show_steps"
-				android:layout_width="160dp"
+				android:layout_width="155dp"
 				android:layout_height="wrap_content"
 				android:layout_marginStart="20dp"
 				android:layout_marginEnd="20dp"
+				android:layout_marginBottom="80dp"
 				android:text="@string/btn_show_steps"
 				android:layout_gravity="center_horizontal" />
 

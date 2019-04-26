@@ -12,8 +12,8 @@ public class Model {
 		task.execute();
 	}
 
-	public void solvePuzzle(PuzzleBoard puzzleBoard, OnSolvePuzzle callback) {
-		SolvePuzzleTask task = new SolvePuzzleTask(puzzleBoard, callback);
+	public void solvePuzzle(PuzzleBoard puzzleBoard, OnSolvePuzzle callback, int heuristics) {
+		SolvePuzzleTask task = new SolvePuzzleTask(puzzleBoard, callback, heuristics);
 		task.execute();
 	}
 }

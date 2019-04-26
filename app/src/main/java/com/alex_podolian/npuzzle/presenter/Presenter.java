@@ -1,7 +1,7 @@
 package com.alex_podolian.npuzzle.presenter;
 
 
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.text.InputFilter;
@@ -11,12 +11,16 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.alex_podolian.npuzzle.R;
 import com.alex_podolian.npuzzle.model.Model;
 import com.alex_podolian.npuzzle.model.PuzzleBoard;
+import com.alex_podolian.npuzzle.model.callbacks.OnComplete;
 import com.alex_podolian.npuzzle.model.callbacks.OnCreateMap;
 import com.alex_podolian.npuzzle.model.callbacks.OnSolvePuzzle;
 import com.alex_podolian.npuzzle.utils.Utils;
+import com.alex_podolian.npuzzle.view.custom_views.PuzzleBoardView;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -24,6 +28,7 @@ import java.util.Objects;
 public class Presenter {
 
 	private Model model;
+	private int checkedPosition;
 
 	public Presenter(Model model) {
 		this.model = model;
@@ -72,11 +77,28 @@ public class Presenter {
 		alert.show();
 	}
 
+	public void selectHeuristic(ProgressDialog progressDialog, PuzzleBoardView puzzleBoardView,
+	                            Context context, OnComplete callback) {
+		String[] listHeuristics = context.getResources().getStringArray(R.array.heuristics);
+		new AlertDialog.Builder(context, R.style.DialogTheme)
+			.setSingleChoiceItems(listHeuristics, checkedPosition, (dialogInterface, position) -> {
+				checkedPosition = position;
+			})
+			.setTitle("Choose heuristic")
+			.setPositiveButton("Continue", (dialog, which) -> {
+				progressDialog.show();
+				puzzleBoardView.solve(callback, checkedPosition);
+			})
+			.show();
+	}
+
+
+
 	public void createMap(int puzzleSize, OnCreateMap callback, Context context) {
 		model.createMap(puzzleSize, callback, context);
 	}
 
-	public void solvePuzzle(PuzzleBoard puzzleBoard, OnSolvePuzzle callback) {
-		model.solvePuzzle(puzzleBoard, callback);
+	public void solvePuzzle(PuzzleBoard puzzleBoard, OnSolvePuzzle callback, int heuristics) {
+		model.solvePuzzle(puzzleBoard, callback, heuristics);
 	}
 }

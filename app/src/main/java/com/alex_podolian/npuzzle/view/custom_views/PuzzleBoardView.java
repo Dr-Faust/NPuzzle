@@ -1,4 +1,4 @@
-package com.alex_podolian.npuzzle.view;
+package com.alex_podolian.npuzzle.view.custom_views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -30,14 +30,17 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 	private PuzzleBoard puzzleBoard;
 	private ArrayList<PuzzleBoard> animation;
 	private OnComplete callback;
+	private boolean isInPuzzleMode;
 
-	public PuzzleBoardView(Context context, int puzzleSize, int textSize, ArrayList<Integer> startMap, Presenter presenter) {
+	public PuzzleBoardView(Context context, int puzzleSize, int textSize, ArrayList<Integer> startMap,
+	                       Presenter presenter, boolean isInPuzzleMode) {
 		super(context);
 		this.context = context;
 		this.presenter = presenter;
 		this.puzzleSize = puzzleSize;
 		this.textSize = textSize;
 		this.startMap = startMap;
+		this.isInPuzzleMode = isInPuzzleMode;
 		animation = null;
 		paint = new Paint();
 		paint.setAntiAlias(true);
@@ -94,17 +97,19 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		switch (event.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				return true;
-			case MotionEvent.ACTION_UP:
-				if (blockSize == 0) {
-					return false;
-				}
-				int j = (int) (event.getY() / blockSize);
-				int i = (int) (event.getX() / blockSize);
-				puzzleBoard.onTouch(i, j);
-				invalidate();
+		if (isInPuzzleMode) {
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:
+					return true;
+				case MotionEvent.ACTION_UP:
+					if (blockSize == 0) {
+						return false;
+					}
+					int j = (int) (event.getY() / blockSize);
+					int i = (int) (event.getX() / blockSize);
+					puzzleBoard.onTouch(i, j);
+					invalidate();
+			}
 		}
 		return super.onTouchEvent(event);
 	}
@@ -117,7 +122,7 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 		}
 	}
 
-	public void solve(OnComplete callback) {
+	public void solve(OnComplete callback, int heuristics) {
 		if (animation != null && animation.size() > 0 || puzzleBoard == null) {
 			Toast.makeText(context, "Wait! It's already in process.", Toast.LENGTH_LONG).show();
 			callback.onCompleted(null);
@@ -129,7 +134,7 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 			return;
 		}
 		this.callback = callback;
-		presenter.solvePuzzle(puzzleBoard, this);
+		presenter.solvePuzzle(puzzleBoard, this, heuristics);
 	}
 
 	@Override

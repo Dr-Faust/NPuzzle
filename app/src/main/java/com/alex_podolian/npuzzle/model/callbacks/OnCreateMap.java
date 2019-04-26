@@ -1,7 +1,7 @@
 package com.alex_podolian.npuzzle.model.callbacks;
 
-import com.google.android.material.textfield.TextInputLayout;
+import android.widget.LinearLayout;
 
 public interface OnCreateMap {
-	void onMapCreated(TextInputLayout[][] matrix, int textSize);
+	void onMapCreated(LinearLayout[][] matrix, int textSize);
 }

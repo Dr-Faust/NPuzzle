@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.alex_podolian.npuzzle.R;
 import com.alex_podolian.npuzzle.model.callbacks.OnCreateMap;
@@ -17,12 +18,12 @@ import com.alex_podolian.npuzzle.utils.Utils;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class CreateMapTask extends AsyncTask<Void, Void, TextInputLayout[][]> {
+public class CreateMapTask extends AsyncTask<Void, Void, LinearLayout[][]> {
 
-	private final int puzzleSize;
-	private final OnCreateMap callback;
 	@SuppressLint("StaticFieldLeak")
 	private Context context;
+	private final int puzzleSize;
+	private final OnCreateMap callback;
 	private int textSize;
 
 	public CreateMapTask(int puzzleSize, OnCreateMap callback, Context context) {
@@ -32,25 +33,28 @@ public class CreateMapTask extends AsyncTask<Void, Void, TextInputLayout[][]> {
 	}
 
 	@Override
-	protected TextInputLayout[][] doInBackground(Void... params) {
-		TextInputLayout[][] matrix = new TextInputLayout[puzzleSize][puzzleSize];
+	protected LinearLayout[][] doInBackground(Void... params) {
+		LinearLayout[][] matrix = new LinearLayout[puzzleSize][puzzleSize];
+		int id = 333333333;
+//		int id = BuildConfig.START_ID;
 		for (int i = 0; i < puzzleSize; i++) {
 			for (int j = 0; j < puzzleSize; j++) {
-				matrix[i][j] = createTilBox(puzzleSize);
+				matrix[i][j] = createTilBox(puzzleSize, id);
+				id++;
 			}
 		}
 		return matrix;
 	}
 
 	@Override
-	protected void onPostExecute(TextInputLayout[][] matrix) {
+	protected void onPostExecute(LinearLayout[][] matrix) {
 		super.onPostExecute(matrix);
 		if (callback != null) {
 			callback.onMapCreated(matrix, textSize);
 		}
 	}
 
-	private TextInputLayout createTilBox(int puzzleSize) {
+	private LinearLayout createTilBox(int puzzleSize, int id) {
 		textSize = Utils.calculateTextSize(puzzleSize);
 
 		int textLength = 1;
@@ -62,12 +66,14 @@ public class CreateMapTask extends AsyncTask<Void, Void, TextInputLayout[][]> {
 
 		DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
 		int pxWidth = displayMetrics.widthPixels;
-		int boxSize = pxWidth / (puzzleSize + 2);
+		int boxSize = pxWidth / (puzzleSize + 1);
 
 		View view = LayoutInflater.from(context).inflate(R.layout.text_input_layout, null);
+		LinearLayout llBox = view.findViewById(R.id.ll_box);
+
 		TextInputLayout tilBox = view.findViewById(R.id.til_box);
-		tilBox.setBoxBackgroundColor(context.getResources().getColor(R.color.white));
 		tilBox.setHintEnabled(false);
+		tilBox.setId(id);
 
 		TextInputEditText etBox = view.findViewById(R.id.et_box);
 		etBox.setGravity(Gravity.CENTER);
@@ -81,6 +87,6 @@ public class CreateMapTask extends AsyncTask<Void, Void, TextInputLayout[][]> {
 		params.height = boxSize;
 		etBox.setLayoutParams(params);
 
-		return tilBox;
+		return llBox;
 	}
 }

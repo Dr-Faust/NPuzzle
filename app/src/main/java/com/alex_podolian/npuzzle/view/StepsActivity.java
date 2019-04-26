@@ -11,6 +11,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.alex_podolian.npuzzle.R;
 import com.alex_podolian.npuzzle.adapter.StepsPagerAdapter;
 import com.alex_podolian.npuzzle.utils.RLogs;
+import com.alex_podolian.npuzzle.utils.ViewPagerPageSelectedListener;
+import com.alex_podolian.npuzzle.view.custom_views.ViewPagerLimitIndicatorView;
 
 import java.util.ArrayList;
 
@@ -23,6 +25,9 @@ public class StepsActivity extends BaseActivity implements View.OnClickListener 
 	@BindView(R.id.viewpager_steps)     ViewPager viewPager;
 	@BindView(R.id.btn_to_first)        AppCompatImageButton btnToFirst;
 	@BindView(R.id.btn_to_last)         AppCompatImageButton btnToLast;
+	@BindView(R.id.steps_dots)          ViewPagerLimitIndicatorView stepsDots;
+
+	ArrayList<ArrayList<Integer>> listMaps;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +44,7 @@ public class StepsActivity extends BaseActivity implements View.OnClickListener 
 		int textSize = getIntent().getIntExtra("text_size", 24);
 		int puzzleSize = getIntent().getIntExtra("puzzle_size", 3);
 
-		ArrayList<ArrayList<Integer>> listMaps = new ArrayList<>();
+		listMaps = new ArrayList<>();
 		for (int index = 0; index < listMapsIntegers.size(); ) {
 			ArrayList<Integer> map = new ArrayList<>();
 			for (int i = 0; i < puzzleSize * puzzleSize; i++) {
@@ -48,26 +53,25 @@ public class StepsActivity extends BaseActivity implements View.OnClickListener 
 			listMaps.add(map);
 		}
 
-		DisplayMetrics displaymetrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-
-//		ViewPager viewPager = findViewById(R.id.viewpager_steps);
-		viewPager.setAdapter(new StepsPagerAdapter(this, listMaps, puzzleSize, textSize, displaymetrics.widthPixels));
+		stepsDots.setPagesCount(listMaps.size() - 1);
+		viewPager.setAdapter(new StepsPagerAdapter(this, listMaps, puzzleSize, textSize));
+		viewPager.addOnPageChangeListener(new ViewPagerPageSelectedListener() {
+			@Override
+			public void onPageSelected(int pagePosition) {
+				stepsDots.setCurrentPageNumber(pagePosition);
+			}
+		});
 		RLogs.w("CURR ITEM = " + viewPager.getCurrentItem());
-
-//		AppCompatImageButton btnToFirst = findViewById(R.id.btn_to_first);
-//		AppCompatImageButton btnToLast = findViewById(R.id.btn_to_last);
-
-//		btnToFirst.setOnClickListener(this);
-//		btnToLast.setOnClickListener(this);
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.btn_to_first:
+				viewPager.setCurrentItem(0);
 				break;
 			case R.id.btn_to_last:
+				viewPager.setCurrentItem(listMaps.size() - 1);
 				break;
 		}
 	}

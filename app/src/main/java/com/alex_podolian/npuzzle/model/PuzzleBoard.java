@@ -52,10 +52,6 @@ public class PuzzleBoard {
 	        PuzzleBlock puzzleBlock = new PuzzleBlock(context, id, (i % puzzleSize) * blockSize,
 		        (i / puzzleSize) * blockSize, blockSize, textSize);
 	        puzzleBlocksArr.add(puzzleBlock);
-
-
-//                PuzzleBlock puzzleBlock = new PuzzleBlock(context, startMatrix[i][j], x, y, blockSize, textSize);
-//                puzzleBlocksArr.add(puzzleBlock);
         }
     }
 
@@ -82,10 +78,6 @@ public class PuzzleBoard {
 
     public ArrayList<Integer> getPuzzleMap() {
         return puzzleMap;
-    }
-
-    public ArrayList<PuzzleBlock> getPuzzleBlocks() {
-        return puzzleBlocksArr;
     }
 
     public int getStepNumber() {
@@ -220,17 +212,6 @@ public class PuzzleBoard {
         return puzzleMap.equals(goalMap);
     }
 
-    public int hamming() {
-        int count = 0;
-        for(Integer node : puzzleMap) {
-            if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
-                count++;
-            }
-        }
-//        RLogs.w("HAMMING = " + count);
-        return count;
-    }
-
     public int manhattan() {
         int distance = 0;
         
@@ -243,8 +224,6 @@ public class PuzzleBoard {
                 distance += abs(xGoal - xCurrent) + abs(yGoal - yCurrent);
             }
         }
-//        RLogs.w("MANHATTAN = " + manhattanDistance);
-//        RLogs.w("STEP NUMBER = " + stepNumber);
         return distance;
     }
 
@@ -260,8 +239,81 @@ public class PuzzleBoard {
                 distance += sqrt(pow((xGoal - xCurrent), 2) + pow((yGoal - yCurrent), 2));
             }
         }
-//        RLogs.w("MANHATTAN = " + manhattanDistance);
-//        RLogs.w("STEP NUMBER = " + stepNumber);
         return distance;
+    }
+
+    public int blocksOutOfRowAndColumn() {
+        int dist = 0;
+        for(Integer node : puzzleMap) {
+            if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
+                int goalNodeIndex =  goalMap.indexOf(node);
+                int puzzleNodeIndex = puzzleMap.indexOf(node);
+                if (puzzleNodeIndex / puzzleSize != goalNodeIndex / puzzleSize) {
+                    dist++;
+                }
+                if (puzzleNodeIndex % puzzleSize != goalNodeIndex % puzzleSize) {
+                    dist++;
+                }
+            }
+        }
+        return dist;
+    }
+
+   public int linearConflict() {
+       int dist = 0;
+       dist = manhattan();
+       dist += linearVerticalConflict();
+       dist += linearHorizontalConflict();
+       return dist;
+   }
+
+    private int linearVerticalConflict() {
+        int linearConflict = 0;
+        int index = 0;
+        for (int row = 0; row < puzzleSize; row++) {
+            int max = -1;
+            for (int col = 0; col < puzzleSize; col++) {
+                int value =  puzzleMap.get(index);
+                index++;
+                if (value != 0 && (value - 1) / puzzleSize == row) {
+                    if (value > max) {
+                        max = value;
+                    } else {
+                        linearConflict++;
+                    }
+                }
+            }
+        }
+        return linearConflict;
+    }
+
+    private int linearHorizontalConflict() {
+        int linearConflict = 0;
+        int index = 0;
+        for (int col = 0; col < puzzleSize; col++) {
+            int max = -1;
+            for (int row = 0; row < puzzleSize; row++) {
+                int value =  puzzleMap.get(index);
+                index++;
+                if (value != 0 && value % puzzleSize == col + 1) {
+                    if (value > max) {
+                        max = value;
+                    } else {
+                        linearConflict++;
+                    }
+                }
+            }
+        }
+        return linearConflict;
+    }
+
+    public int misplacedBlocks() {
+        int count = 0;
+        for(Integer node : puzzleMap) {
+            if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
+                count++;
+            }
+        }
+        return count;
     }
 }

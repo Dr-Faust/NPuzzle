@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
@@ -24,13 +25,13 @@ import butterknife.ButterKnife;
 
 public class NewPuzzleActivity extends BaseActivity implements View.OnClickListener, OnCreateMap {
 
-	@BindView(R.id.new_container)   GridLayout newContainer;
+	@BindView(R.id.gl_new_container)   GridLayout glNewContainer;
 	@BindView(R.id.toolbar_new)     Toolbar toolbar;
 	@BindView(R.id.btn_continue)    MaterialButton btnContinue;
 
 	private ProgressDialog progressDialog;
 	private int puzzleSize;
-	private TextInputLayout[][] tilMatrix;
+	private LinearLayout[][] llMatrix;
 	private int textSize;
 
 	@Override
@@ -55,23 +56,28 @@ public class NewPuzzleActivity extends BaseActivity implements View.OnClickListe
 
 		presenter.createMap(puzzleSize,this, this);
 
-		newContainer.setRowCount(puzzleSize);
-		newContainer.setColumnCount(puzzleSize);
-		newContainer.setAlignmentMode(GridLayout.ALIGN_MARGINS);
-		newContainer.setRowOrderPreserved(false);
+		glNewContainer.setRowCount(puzzleSize);
+		glNewContainer.setColumnCount(puzzleSize);
+//		glNewContainer.setAlignmentMode(GridLayout.ALIGN_MARGINS);
+		glNewContainer.setRowOrderPreserved(false);
 	}
 
 	@Override
 	public void onClick(View view) {
 		ArrayList<Integer> map = new ArrayList<>();
 		int index = 0;
+		int id = 333333333;
+//		int id = BuildConfig.START_ID;
 		for (int i = 0; i < puzzleSize; i++) {
 			for (int j = 0; j < puzzleSize; j++) {
-				String value = Objects.requireNonNull(tilMatrix[i][j].getEditText()).getText().toString();
+				TextInputLayout tilBox = llMatrix[i][j].findViewById(id);
+				String value = Objects.requireNonNull(tilBox.getEditText()).getText().toString();
+				id++;
 				if (!Utils.isNullOrEmpty(value)) {
 					map.add(Integer.parseInt(value));
 					if (map.get(index) >= puzzleSize * puzzleSize) {
-						Toast.makeText(this, "Values must be from 0 to " + (puzzleSize * puzzleSize - 1) + ".", Toast.LENGTH_SHORT).show();
+						Toast.makeText(this, "Values must be from 0 to " +
+							(puzzleSize * puzzleSize - 1) + ".", Toast.LENGTH_SHORT).show();
 						return;
 					}
 					index++;
@@ -107,12 +113,12 @@ public class NewPuzzleActivity extends BaseActivity implements View.OnClickListe
 	}
 
 	@Override
-	public void onMapCreated(TextInputLayout[][] tilMatrix, int textSize) {
-		this.tilMatrix = tilMatrix;
+	public void onMapCreated(LinearLayout[][] llMatrix, int textSize) {
+		this.llMatrix = llMatrix;
 		this.textSize = textSize;
 		for (int i = 0; i < puzzleSize; i++) {
 			for (int j = 0; j < puzzleSize; j++) {
-				newContainer.addView(tilMatrix[i][j]);
+				glNewContainer.addView(llMatrix[i][j]);
 			}
 		}
 		progressDialog.dismiss();
