@@ -5,8 +5,9 @@
 		<item name="colorPrimary">@color/primaryColor</item>
 		<item name="colorPrimaryDark">@color/primaryDarkColor</item>
 		<item name="colorAccent">@color/primaryLightColor</item>
-		<item name="android:textColor">@color/primaryTextColor</item>
-		<item name="android:colorBackground">@drawable/background</item>
+		<!--<item name="android:textColor">@color/primaryTextColor</item>-->
+		<item name="android:windowBackground">@drawable/background</item>
+		<item name="android:itemTextAppearance">@style/TextAppearance</item>
 	</style>
 
 	<style name="AppTheme.NoActionBar">
@@ -15,7 +16,12 @@
 		<item name="colorPrimary">@color/primaryColor</item>
 		<item name="colorPrimaryDark">@color/primaryDarkColor</item>
 		<item name="colorAccent">@color/primaryLightColor</item>
-		<item name="android:colorBackground">@drawable/background</item>
+		<item name="android:windowBackground">@drawable/background</item>
+		<item name="android:itemTextAppearance">@style/TextAppearance</item>
+	</style>
+
+	<style name="TextAppearance">
+		<item name="android:textColor">@color/primaryDarkColor</item>
 	</style>
 
 	<style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
@@ -42,6 +48,7 @@
 	<style name="Toolbar">
 		<item name="theme">@style/ThemeOverlay.MaterialComponents.Dark</item>
 		<item name="android:textColorPrimary">@color/white</item>
+		<item name="actionMenuTextColor">@color/primaryDarkColor</item>
 		<item name="android:elevation" tools:targetApi="lollipop">4dp</item>
 	</style>
 

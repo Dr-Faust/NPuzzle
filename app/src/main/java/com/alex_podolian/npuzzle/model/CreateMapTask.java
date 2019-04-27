@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.alex_podolian.npuzzle.R;
+import com.alex_podolian.npuzzle.app.Config;
 import com.alex_podolian.npuzzle.model.callbacks.OnCreateMap;
 import com.alex_podolian.npuzzle.utils.Utils;
 import com.google.android.material.textfield.TextInputEditText;
@@ -24,7 +25,6 @@ public class CreateMapTask extends AsyncTask<Void, Void, LinearLayout[][]> {
 	private Context context;
 	private final int puzzleSize;
 	private final OnCreateMap callback;
-	private int textSize;
 
 	public CreateMapTask(int puzzleSize, OnCreateMap callback, Context context) {
 		this.callback = callback;
@@ -35,8 +35,7 @@ public class CreateMapTask extends AsyncTask<Void, Void, LinearLayout[][]> {
 	@Override
 	protected LinearLayout[][] doInBackground(Void... params) {
 		LinearLayout[][] matrix = new LinearLayout[puzzleSize][puzzleSize];
-		int id = 333333333;
-//		int id = BuildConfig.START_ID;
+		int id = Config.START_ID;
 		for (int i = 0; i < puzzleSize; i++) {
 			for (int j = 0; j < puzzleSize; j++) {
 				matrix[i][j] = createTilBox(puzzleSize, id);
@@ -50,12 +49,12 @@ public class CreateMapTask extends AsyncTask<Void, Void, LinearLayout[][]> {
 	protected void onPostExecute(LinearLayout[][] matrix) {
 		super.onPostExecute(matrix);
 		if (callback != null) {
-			callback.onMapCreated(matrix, textSize);
+			callback.onMapCreated(matrix);
 		}
 	}
 
 	private LinearLayout createTilBox(int puzzleSize, int id) {
-		textSize = Utils.calculateTextSize(puzzleSize);
+		int textSize = Utils.calculateTextSize(puzzleSize);
 
 		int textLength = 1;
 		if (puzzleSize > 3 && puzzleSize < 11) {

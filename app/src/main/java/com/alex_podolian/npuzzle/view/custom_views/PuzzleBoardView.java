@@ -12,7 +12,6 @@ import com.alex_podolian.npuzzle.model.PuzzleBoard;
 import com.alex_podolian.npuzzle.model.callbacks.OnComplete;
 import com.alex_podolian.npuzzle.model.callbacks.OnSolvePuzzle;
 import com.alex_podolian.npuzzle.presenter.Presenter;
-import com.alex_podolian.npuzzle.utils.RLogs;
 
 import java.util.ArrayList;
 
@@ -21,11 +20,11 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 
 	private Context context;
 	private Presenter presenter;
-//	private int containerWidth;
 	private int puzzleSize;
 	private int textSize;
 	private int blockSize = 0;
 	private ArrayList<Integer> startMap;
+	private ArrayList<Integer> goalMap;
 	private Paint paint;
 	private PuzzleBoard puzzleBoard;
 	private ArrayList<PuzzleBoard> animation;
@@ -33,28 +32,19 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 	private boolean isInPuzzleMode;
 
 	public PuzzleBoardView(Context context, int puzzleSize, int textSize, ArrayList<Integer> startMap,
-	                       Presenter presenter, boolean isInPuzzleMode) {
+	                       ArrayList<Integer> goalMap, Presenter presenter, boolean isInPuzzleMode) {
 		super(context);
 		this.context = context;
 		this.presenter = presenter;
 		this.puzzleSize = puzzleSize;
 		this.textSize = textSize;
 		this.startMap = startMap;
+		this.goalMap = goalMap;
 		this.isInPuzzleMode = isInPuzzleMode;
 		animation = null;
 		paint = new Paint();
 		paint.setAntiAlias(true);
 	}
-
-//	public PuzzleBoardView(Context context, PuzzleBoard puzzleBoard, ArrayList<Integer> puzzlFeMap, int puzzleSize) {
-//		super(context);
-//		this.context = context;
-//		this.puzzleBoard = puzzleBoard;
-//		this.puzzleSize = puzzleSize;
-//		animation = null;
-//		paint = new Paint();
-//		paint.setAntiAlias(true);
-//	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -78,19 +68,17 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		initView(getMeasuredWidth());
+		initView();
 	}
 
-	public void initView(int containerWidth) {
-//		this.containerWidth = containerWidth;
-//		RLogs.w("CONTAINER WIDTH = " + containerWidth);
+	public void initView() {
+		int containerWidth = getMeasuredWidth();
 		if (containerWidth == 0) {
 			return;
 		}
 		blockSize = containerWidth / puzzleSize;
 		if (animation == null || animation.size() < 1) {
-//			RLogs.w("START MAP = " + startMap);
-			puzzleBoard = new PuzzleBoard(context, puzzleSize, textSize, startMap, blockSize);
+			puzzleBoard = new PuzzleBoard(context, puzzleSize, textSize, startMap, goalMap, blockSize);
 		}
 	}
 
@@ -115,32 +103,34 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 	}
 
 	public void shuffleBoard() {
-		if (animation == null && puzzleBoard != null) {
-			puzzleBoard.shuffleBoard();
-		} else if (animation != null && animation.size() > 0) {
+		if (animation != null && animation.size() > 0) {
 			Toast.makeText(context, "Come on!! it's in solving process!", Toast.LENGTH_LONG).show();
+			return;
+		}
+		if (animation == null) {
+			puzzleBoard.shuffleBoard();
 		}
 	}
 
-	public void solve(OnComplete callback, int heuristics) {
+	public void solve(OnComplete callback, int algorithm, int heuristics) {
 		if (animation != null && animation.size() > 0 || puzzleBoard == null) {
 			Toast.makeText(context, "Wait! It's already in process.", Toast.LENGTH_LONG).show();
-			callback.onCompleted(null);
+			callback.onCompleted(null, 0, 0);
 			return;
 		}
 		if (puzzleBoard.isGoal()){
 			Toast.makeText(context, "It's already solved! Shuffle it!", Toast.LENGTH_LONG).show();
-			callback.onCompleted(null);
+			callback.onCompleted(null, 0, 0);
 			return;
 		}
 		this.callback = callback;
-		presenter.solvePuzzle(puzzleBoard, this, heuristics);
+		presenter.solvePuzzle(puzzleBoard, this, algorithm, heuristics);
 	}
 
 	@Override
-	public void onPuzzleSolved(ArrayList<PuzzleBoard> steps) {
+	public void onPuzzleSolved(ArrayList<PuzzleBoard> steps, long complexityInTime, long complexityInSize) {
 		animation = steps;
 		invalidate();
-		callback.onCompleted(steps);
+		callback.onCompleted(steps, complexityInTime, complexityInSize);
 	}
 }

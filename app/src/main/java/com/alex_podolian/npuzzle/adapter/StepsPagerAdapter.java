@@ -51,7 +51,7 @@ public class StepsPagerAdapter extends PagerAdapter {
 
         container.addView(titleText);
         PuzzleBoardView puzzleBoardView = new PuzzleBoardView(context, puzzleSize, textSize,
-            listMaps.get(position), null, false);
+            listMaps.get(position), null, null, false);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
         layoutParams.weight = 1;
         layoutParams.setMargins(37, 0, 37, 0);

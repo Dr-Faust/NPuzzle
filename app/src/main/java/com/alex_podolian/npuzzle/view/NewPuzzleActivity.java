@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
 import com.alex_podolian.npuzzle.R;
+import com.alex_podolian.npuzzle.app.Config;
 import com.alex_podolian.npuzzle.model.callbacks.OnCreateMap;
 import com.alex_podolian.npuzzle.utils.Utils;
 import com.alex_podolian.npuzzle.utils.Validator;
@@ -33,6 +34,7 @@ public class NewPuzzleActivity extends BaseActivity implements View.OnClickListe
 	private int puzzleSize;
 	private LinearLayout[][] llMatrix;
 	private int textSize;
+	private ArrayList<Integer> goalMap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,8 @@ public class NewPuzzleActivity extends BaseActivity implements View.OnClickListe
 		toolbar.setNavigationOnClickListener(v -> onBackPressed());
 		btnContinue.setOnClickListener(this);
 		puzzleSize = getIntent().getIntExtra("puzzle_size", 3);
+		textSize = getIntent().getIntExtra("text_size", 24);
+		goalMap = getIntent().getIntegerArrayListExtra("goal_map");
 
 		initMap(puzzleSize);
 	}
@@ -66,8 +70,7 @@ public class NewPuzzleActivity extends BaseActivity implements View.OnClickListe
 	public void onClick(View view) {
 		ArrayList<Integer> map = new ArrayList<>();
 		int index = 0;
-		int id = 333333333;
-//		int id = BuildConfig.START_ID;
+		int id = Config.START_ID;
 		for (int i = 0; i < puzzleSize; i++) {
 			for (int j = 0; j < puzzleSize; j++) {
 				TextInputLayout tilBox = llMatrix[i][j].findViewById(id);
@@ -100,12 +103,14 @@ public class NewPuzzleActivity extends BaseActivity implements View.OnClickListe
 				}
 			}
 		}
-		if (Validator.isSolvable(puzzleSize, map, Utils.makeSpiralMap(puzzleSize))) {
+		if (Validator.isSolvable(puzzleSize, map,
+			presenter.gameMode() == 0 ? Utils.makeSpiralMap(puzzleSize) : Utils.makeClassicMap(puzzleSize))) {
 			Intent intent = new Intent(this, PuzzleActivity.class);
 			intent.putExtra("option", "new");
 			intent.putExtra("puzzle_size", puzzleSize);
 			intent.putExtra("text_size", textSize);
-			intent.putIntegerArrayListExtra("map", map);
+			intent.putIntegerArrayListExtra("start_map", map);
+			intent.putIntegerArrayListExtra("goal_map", goalMap);
 			startActivity(intent);
 		} else {
 			Toast.makeText(this, "Puzzle is unsolvable! Please edit map.", Toast.LENGTH_SHORT).show();
@@ -113,9 +118,8 @@ public class NewPuzzleActivity extends BaseActivity implements View.OnClickListe
 	}
 
 	@Override
-	public void onMapCreated(LinearLayout[][] llMatrix, int textSize) {
+	public void onMapCreated(LinearLayout[][] llMatrix) {
 		this.llMatrix = llMatrix;
-		this.textSize = textSize;
 		for (int i = 0; i < puzzleSize; i++) {
 			for (int j = 0; j < puzzleSize; j++) {
 				glNewContainer.addView(llMatrix[i][j]);

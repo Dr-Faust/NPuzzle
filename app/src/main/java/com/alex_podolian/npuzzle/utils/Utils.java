@@ -1,9 +1,15 @@
 package com.alex_podolian.npuzzle.utils;
 
+import android.content.Context;
 import android.graphics.Point;
+import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -102,7 +108,18 @@ public class Utils {
                 spiralMap.add(spiralMatrix[i][j]);
             }
         }
+        RLogs.w("SPIRAL MAP = " + spiralMap);
         return spiralMap;
+    }
+
+    public static ArrayList<Integer> makeClassicMap(int puzzleSize) {
+        ArrayList<Integer> classicMap = new ArrayList<>();
+
+        for (int i = 1; i <= puzzleSize * puzzleSize; i++) {
+            classicMap.add(i == puzzleSize * puzzleSize ? 0 : i);
+        }
+        RLogs.w("CLASSIC MAP = " + classicMap);
+        return classicMap;
     }
 
     private static void swapNodes(int i, int j, ArrayList<Integer> puzzleMap) {
@@ -154,5 +171,23 @@ public class Utils {
 
     public static int xyToIndex(int x, int y, int puzzleSize) {
         return x + y * puzzleSize;
+    }
+
+    public static ArrayList<String> mapFromFile(Uri uri, Context context) throws IOException {
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        BufferedReader reader = null;
+        if (inputStream != null) {
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+        }
+        ArrayList<String> map = new ArrayList<>();
+        if (reader != null) {
+            for (String line; (line = reader.readLine()) != null; ) {
+                map.add(line);
+            }
+        }
+        if (inputStream != null) {
+            inputStream.close();
+        }
+        return map;
     }
 }

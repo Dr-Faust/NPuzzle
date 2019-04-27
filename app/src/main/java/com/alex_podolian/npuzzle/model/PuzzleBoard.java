@@ -32,14 +32,14 @@ public class PuzzleBoard {
     private ArrayList<Integer> puzzleMap;
     private ArrayList<Integer> goalMap;
     private PuzzleBoard previousBoard;
-    private int stepNumber = 0;
+    private int step = 0;
 
-    public PuzzleBoard(Context context, int puzzleSize, int textSize, ArrayList<Integer> puzzleMap, int blockSize) {
+    public PuzzleBoard(Context context, int puzzleSize, int textSize, ArrayList<Integer> puzzleMap, ArrayList<Integer> goalMap, int blockSize) {
         this.context = context;
         this.textSize = textSize;
         this.blockSize = blockSize;
         this.puzzleSize = puzzleSize;
-        goalMap = Utils.makeSpiralMap(puzzleSize);
+        this.goalMap = goalMap;
         this.puzzleMap = puzzleMap;
         initPuzzleMatrix(blockSize, textSize);
     }
@@ -80,18 +80,53 @@ public class PuzzleBoard {
         return puzzleMap;
     }
 
-    public int getStepNumber() {
-        return stepNumber;
+    public int getStep() {
+        return step;
+
     }
 
-    private PuzzleBoard(PuzzleBoard previousBoard, int stepNumber) {
+    public int getF(int heuristics) {
+        switch (heuristics) {
+            case 0:
+                return manhattan() + step;
+            case 1:
+                return euclidean() + step;
+            case 3:
+                return blocksOutOfRowAndColumn() + step;
+            case 4:
+                return linearConflict() + step;
+            case 5:
+                return misplacedBlocks() + step;
+            default:
+                return manhattan() + step;
+        }
+    }
+
+    public int getH(int heuristics) {
+        switch (heuristics) {
+            case 0:
+                return manhattan();
+            case 1:
+                return euclidean();
+            case 3:
+                return blocksOutOfRowAndColumn();
+            case 4:
+                return linearConflict();
+            case 5:
+                return misplacedBlocks();
+            default:
+                return manhattan();
+        }
+    }
+
+    private PuzzleBoard(PuzzleBoard previousBoard, int step) {
         this.context = previousBoard.context;
         this.textSize = previousBoard.textSize;
         this.blockSize = previousBoard.blockSize;
         this.puzzleSize = previousBoard.puzzleSize;
         this.goalMap = previousBoard.goalMap;
         this.previousBoard = previousBoard;
-        this.stepNumber = stepNumber + 1;
+        this.step = step + 1;
         this.puzzleMap = new ArrayList<>(previousBoard.puzzleMap);
         this.puzzleBlocksArr = new ArrayList<>();
         int id;
@@ -199,7 +234,7 @@ public class PuzzleBoard {
             int neighbourX = emptyBlockX + coordinates[0];
             int neighbourY = emptyBlockY + coordinates[1];
             if (neighbourX >= 0 && neighbourX < puzzleSize && neighbourY >= 0 && neighbourY < puzzleSize) {
-                PuzzleBoard neighbourBoard = new PuzzleBoard(this, stepNumber);
+                PuzzleBoard neighbourBoard = new PuzzleBoard(this, step);
                 neighbourBoard.swapBlocks((Utils.xyToIndex(neighbourX, neighbourY, puzzleSize)),
                     Utils.xyToIndex(emptyBlockX, emptyBlockY, puzzleSize));
                 result.add(neighbourBoard);

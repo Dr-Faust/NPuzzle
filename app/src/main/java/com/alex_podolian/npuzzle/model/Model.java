@@ -2,6 +2,7 @@ package com.alex_podolian.npuzzle.model;
 
 import android.content.Context;
 
+import com.alex_podolian.npuzzle.model.algorithms.AStarTask;
 import com.alex_podolian.npuzzle.model.callbacks.OnCreateMap;
 import com.alex_podolian.npuzzle.model.callbacks.OnSolvePuzzle;
 
@@ -12,8 +13,8 @@ public class Model {
 		task.execute();
 	}
 
-	public void solvePuzzle(PuzzleBoard puzzleBoard, OnSolvePuzzle callback, int heuristics) {
-		SolvePuzzleTask task = new SolvePuzzleTask(puzzleBoard, callback, heuristics);
+	public void solvePuzzle(PuzzleBoard puzzleBoard, OnSolvePuzzle callback, int algorithm, int heuristics) {
+		AStarTask task = new AStarTask(puzzleBoard, callback, algorithm, heuristics);
 		task.execute();
 	}
 }

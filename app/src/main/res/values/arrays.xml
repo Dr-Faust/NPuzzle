@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string-array name="game_mode">
+		<item>Spiral</item>
+		<item>Classic</item>
+	</string-array>
+
 	<string-array name="heuristics">
 		<item>Manhattan</item>
 		<item>Euclidean</item>
 		<item>Blocks out of row and column</item>
 		<item>Linear conflict</item>
 		<item>Misplaced blocks</item>
+	</string-array>
+
+	<string-array name="algorithm">
+		<item>A star</item>
+		<item>Greedy search</item>
 	</string-array>
 </resources>

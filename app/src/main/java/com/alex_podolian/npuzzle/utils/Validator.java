@@ -22,30 +22,53 @@ public class Validator {
 	}
 
 	public static boolean isSolvable(int puzzleSize, ArrayList<Integer> startMap, ArrayList<Integer> goalMap) {
-		int nbInv = 0;
+		int inversions = 0;
 		ArrayList<Integer> testDone = new ArrayList<>();
 
-		for(int indexGoal = 0; indexGoal < puzzleSize * puzzleSize - 1; indexGoal++) {
-			for(int indexPuzzle = 0; indexPuzzle < startMap.indexOf(goalMap.get(indexGoal)); indexPuzzle++) {
+		for (int indexGoal = 0; indexGoal < puzzleSize * puzzleSize - 1; indexGoal++) {
+			for (int indexPuzzle = 0; indexPuzzle < startMap.indexOf(goalMap.get(indexGoal)); indexPuzzle++) {
 				if (!testDone.contains(startMap.get(indexPuzzle))) {
-					nbInv++;
+					inversions++;
 				}
 			}
 			testDone.add(goalMap.get(indexGoal));
 		}
-
-		RLogs.w("TEST DONE SIZE = " + testDone.size());
 		int dist = manhattan(puzzleSize, startMap, goalMap);
-		RLogs.w("DIST = " + dist);
-		RLogs.w("NB INV = " + nbInv);
-		boolean solvable;
-		if (dist % 2 == 0 && nbInv % 2 == 0 || dist % 2 != 0 && nbInv % 2 != 0) {
-			RLogs.w("SOLVABLE!!!");
-			solvable = true;
-		} else {
-			RLogs.w("UNSOLVABLE!!!");
-			solvable = false;
+		return dist % 2 == 0 && inversions % 2 == 0 || dist % 2 != 0 && inversions % 2 != 0;
+	}
+
+	public static ArrayList<Integer> getValidMap(ArrayList<String> map) {
+		ArrayList<Integer> validMap = new ArrayList<>();
+		boolean puzzleSizeObtained = false;
+		int puzzleSize = 0;
+		int count;
+
+		for (String line : map) {
+			line = line.trim();
+			String[] splittedLines = line.split(" ");
+			count = 0;
+			if (line.contains("#") && line.indexOf("#") == 0) {
+				continue;
+			}
+			for (String splittedLine : splittedLines) {
+//				RLogs.w("SPLITTED LINE #" + index + " = " + splittedLine + " MATCHES = " + splittedLine.matches("\\d"));
+				if (splittedLine.matches("\\d+")) {
+					int value = Integer.parseInt(splittedLine);
+					if (!puzzleSizeObtained) {
+						puzzleSize = value;
+						puzzleSizeObtained = true;
+					} else if (count < puzzleSize && value < puzzleSize * puzzleSize) {
+						validMap.add(value);
+						count++;
+					}
+				}
+			}
 		}
-		return solvable;
+		if (validMap.size() == puzzleSize * puzzleSize) {
+			return validMap;
+		}
+		else {
+			return null;
+		}
 	}
 }
