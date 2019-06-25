@@ -95,8 +95,10 @@ public class PuzzleBoardView extends View implements OnSolvePuzzle {
 					}
 					int j = (int) (event.getY() / blockSize);
 					int i = (int) (event.getX() / blockSize);
-					puzzleBoard.onTouch(i, j);
-					invalidate();
+					if (i < puzzleSize && j < puzzleSize) {
+						puzzleBoard.onTouch(i, j);
+						invalidate();
+					}
 			}
 		}
 		return super.onTouchEvent(event);

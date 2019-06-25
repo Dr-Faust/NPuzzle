@@ -58,6 +58,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+		super.onActivityResult(requestCode, resultCode, resultData);
 		if (requestCode == Config.READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 			if (resultData != null) {
 				Uri uri = resultData.getData();
