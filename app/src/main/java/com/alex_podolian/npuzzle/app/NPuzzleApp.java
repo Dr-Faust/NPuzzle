@@ -13,25 +13,25 @@ public class NPuzzleApp extends Application {
 //		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 //	}
 
-	protected Presenter presenter;
-	private static NPuzzleApp mInstance;
+    protected Presenter presenter;
+    private static NPuzzleApp mInstance;
 
-	@Override
-	public void onCreate() {
-		super.onCreate();
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-		AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
 
-		mInstance = this;
-		Model model = new Model();
-		presenter = new Presenter(model);
-	}
+        mInstance = this;
+        Model model = new Model();
+        presenter = new Presenter(model);
+    }
 
-	public Presenter getPresenter() {
-		return presenter;
-	}
+    public Presenter getPresenter() {
+        return presenter;
+    }
 
-	public static synchronized NPuzzleApp getInstance() {
-		return mInstance;
-	}
+    public static synchronized NPuzzleApp getInstance() {
+        return mInstance;
+    }
 }

@@ -21,71 +21,71 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class CreateMapTask extends AsyncTask<Void, Void, LinearLayout[][]> {
 
-	@SuppressLint("StaticFieldLeak")
-	private Context context;
-	private final int puzzleSize;
-	private final OnCreateMap callback;
+    @SuppressLint("StaticFieldLeak")
+    private Context context;
+    private final int puzzleSize;
+    private final OnCreateMap callback;
 
-	public CreateMapTask(int puzzleSize, OnCreateMap callback, Context context) {
-		this.callback = callback;
-		this.puzzleSize = puzzleSize;
-		this.context = context;
-	}
+    public CreateMapTask(int puzzleSize, OnCreateMap callback, Context context) {
+        this.callback = callback;
+        this.puzzleSize = puzzleSize;
+        this.context = context;
+    }
 
-	@Override
-	protected LinearLayout[][] doInBackground(Void... params) {
-		LinearLayout[][] matrix = new LinearLayout[puzzleSize][puzzleSize];
-		int id = Config.START_ID;
-		for (int i = 0; i < puzzleSize; i++) {
-			for (int j = 0; j < puzzleSize; j++) {
-				matrix[i][j] = createTilBox(puzzleSize, id);
-				id++;
-			}
-		}
-		return matrix;
-	}
+    @Override
+    protected LinearLayout[][] doInBackground(Void... params) {
+        LinearLayout[][] matrix = new LinearLayout[puzzleSize][puzzleSize];
+        int id = Config.START_ID;
+        for (int i = 0; i < puzzleSize; i++) {
+            for (int j = 0; j < puzzleSize; j++) {
+                matrix[i][j] = createTilBox(puzzleSize, id);
+                id++;
+            }
+        }
+        return matrix;
+    }
 
-	@Override
-	protected void onPostExecute(LinearLayout[][] matrix) {
-		super.onPostExecute(matrix);
-		if (callback != null) {
-			callback.onMapCreated(matrix);
-		}
-	}
+    @Override
+    protected void onPostExecute(LinearLayout[][] matrix) {
+        super.onPostExecute(matrix);
+        if (callback != null) {
+            callback.onMapCreated(matrix);
+        }
+    }
 
-	private LinearLayout createTilBox(int puzzleSize, int id) {
-		int textSize = Utils.calculateTextSize(puzzleSize);
+    private LinearLayout createTilBox(int puzzleSize, int id) {
+        int textSize = Utils.calculateTextSize(puzzleSize);
 
-		int textLength = 1;
-		if (puzzleSize > 3 && puzzleSize < 11) {
-			textLength = 2;
-		} else if (puzzleSize > 10) {
-			textLength = 3;
-		}
+        int textLength = 1;
+        if (puzzleSize > 3 && puzzleSize < 11) {
+            textLength = 2;
+        } else if (puzzleSize > 10) {
+            textLength = 3;
+        }
 
-		DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-		int pxWidth = displayMetrics.widthPixels;
-		int boxSize = pxWidth / (puzzleSize + 1);
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int pxWidth = displayMetrics.widthPixels;
+        int boxSize = pxWidth / (puzzleSize + 1);
 
-		View view = LayoutInflater.from(context).inflate(R.layout.text_input_layout, null);
-		LinearLayout llBox = view.findViewById(R.id.ll_box);
+        View view = LayoutInflater.from(context).inflate(R.layout.text_input_layout, null);
+        LinearLayout llBox = view.findViewById(R.id.ll_box);
 
-		TextInputLayout tilBox = view.findViewById(R.id.til_box);
-		tilBox.setHintEnabled(false);
-		tilBox.setId(id);
+        TextInputLayout tilBox = view.findViewById(R.id.til_box);
+        tilBox.setHintEnabled(false);
+        tilBox.setId(id);
 
-		TextInputEditText etBox = view.findViewById(R.id.et_box);
-		etBox.setGravity(Gravity.CENTER);
-		etBox.setTextSize(textSize);
-		etBox.setInputType(InputType.TYPE_CLASS_NUMBER);
-		etBox.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textLength)});
-		etBox.setPadding(0,0,0,0);
+        TextInputEditText etBox = view.findViewById(R.id.et_box);
+        etBox.setGravity(Gravity.CENTER);
+        etBox.setTextSize(textSize);
+        etBox.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etBox.setFilters(new InputFilter[]{new InputFilter.LengthFilter(textLength)});
+        etBox.setPadding(0, 0, 0, 0);
 
-		ViewGroup.LayoutParams params = etBox.getLayoutParams();
-		params.width = boxSize;
-		params.height = boxSize;
-		etBox.setLayoutParams(params);
+        ViewGroup.LayoutParams params = etBox.getLayoutParams();
+        params.width = boxSize;
+        params.height = boxSize;
+        etBox.setLayoutParams(params);
 
-		return llBox;
-	}
+        return llBox;
+    }
 }

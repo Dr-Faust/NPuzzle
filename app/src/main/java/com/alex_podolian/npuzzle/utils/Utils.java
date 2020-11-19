@@ -15,7 +15,8 @@ import java.util.Collections;
 
 public class Utils {
 
-    private Utils() {}
+    private Utils() {
+    }
 
     public static boolean isNullOrEmpty(@Nullable String string) {
         return (string == null || string.isEmpty() || string.equalsIgnoreCase("null"));
@@ -128,12 +129,11 @@ public class Utils {
         puzzleMap.set(i, id);
     }
 
-
     private static Point getEmptyPoint(ArrayList<Integer> puzzleMap, int puzzleSize) {
         int emptyX = 0;
         int emptyY = 0;
-        for(int i = 0; i < puzzleSize * puzzleSize; i++) {
-            if(puzzleMap.get(i) == 0) {
+        for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+            if (puzzleMap.get(i) == 0) {
                 emptyX = i % puzzleSize;
                 emptyY = i / puzzleSize;
                 break;
@@ -149,7 +149,7 @@ public class Utils {
             int emptyX = getEmptyPoint(puzzleMap, puzzleSize).x;
             int emptyY = getEmptyPoint(puzzleMap, puzzleSize).y;
 
-            if (emptyX+ 1 < puzzleSize) {
+            if (emptyX + 1 < puzzleSize) {
                 options.add(new Point(emptyX + 1, emptyY));
             }
             if (emptyX - 1 >= 0) {
@@ -164,7 +164,7 @@ public class Utils {
             Collections.shuffle(options);
             Point selectedPoint = options.get(0);
             swapNodes(xyToIndex(selectedPoint.x, selectedPoint.y, puzzleSize),
-                xyToIndex(emptyX, emptyY, puzzleSize), puzzleMap);
+                    xyToIndex(emptyX, emptyY, puzzleSize), puzzleMap);
         }
         return puzzleMap;
     }

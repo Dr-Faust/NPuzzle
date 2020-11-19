@@ -5,5 +5,5 @@ import com.alex_podolian.npuzzle.model.PuzzleBoard;
 import java.util.ArrayList;
 
 public interface OnSolvePuzzle {
-	void onPuzzleSolved(ArrayList<PuzzleBoard> steps, long complexityInTime, long complexityInSize);
+    void onPuzzleSolved(ArrayList<PuzzleBoard> steps, long complexityInTime, long complexityInSize);
 }

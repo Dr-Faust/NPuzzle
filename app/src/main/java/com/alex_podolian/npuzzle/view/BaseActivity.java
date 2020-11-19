@@ -13,12 +13,12 @@ import java.util.Objects;
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
-	protected Presenter presenter;
+    protected Presenter presenter;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		NPuzzleApp myApp = (NPuzzleApp) Objects.requireNonNull(getApplicationContext());
-		presenter = myApp.getPresenter();
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        NPuzzleApp myApp = (NPuzzleApp) Objects.requireNonNull(getApplicationContext());
+        presenter = myApp.getPresenter();
+    }
 }

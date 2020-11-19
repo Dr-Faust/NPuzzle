@@ -51,7 +51,7 @@ public class StepsPagerAdapter extends PagerAdapter {
 
         container.addView(titleText);
         PuzzleBoardView puzzleBoardView = new PuzzleBoardView(context, puzzleSize, textSize,
-            listMaps.get(position), null, null, false);
+                listMaps.get(position), null, null, false);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
         layoutParams.weight = 1;
         layoutParams.setMargins(37, 0, 37, 0);
@@ -62,7 +62,7 @@ public class StepsPagerAdapter extends PagerAdapter {
             MaterialButton againBtn = new MaterialButton(context);
             againBtn.setText("New game");
             LinearLayout.LayoutParams btnLayoutParams = new LinearLayout.LayoutParams(300,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
             btnLayoutParams.setMargins(0, 0, 0, 30);
             btnLayoutParams.gravity = Gravity.CENTER;
             againBtn.setLayoutParams(btnLayoutParams);

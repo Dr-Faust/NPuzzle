@@ -8,6 +8,7 @@ import android.graphics.Point;
 import androidx.annotation.NonNull;
 
 import com.alex_podolian.npuzzle.utils.Utils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -18,10 +19,10 @@ import static java.lang.Math.sqrt;
 public class PuzzleBoard {
 
     private static final int[][] NEIGHBOUR_COORDINATES = {
-        {-1, 0},
-        {1, 0},
-        {0, -1},
-        {0, 1}
+            {-1, 0},
+            {1, 0},
+            {0, -1},
+            {0, 1}
     };
 
     private Context context;
@@ -46,20 +47,20 @@ public class PuzzleBoard {
 
     private void initPuzzleMatrix(int blockSize, int textSize) {
         puzzleBlocksArr = new ArrayList<>();
-	    int id;
+        int id;
         for (int i = 0; i < puzzleSize * puzzleSize; i++) {
-	        id = puzzleMap.get(i);
-	        PuzzleBlock puzzleBlock = new PuzzleBlock(context, id, (i % puzzleSize) * blockSize,
-		        (i / puzzleSize) * blockSize, blockSize, textSize);
-	        puzzleBlocksArr.add(puzzleBlock);
+            id = puzzleMap.get(i);
+            PuzzleBlock puzzleBlock = new PuzzleBlock(context, id, (i % puzzleSize) * blockSize,
+                    (i / puzzleSize) * blockSize, blockSize, textSize);
+            puzzleBlocksArr.add(puzzleBlock);
         }
     }
 
     private Point getEmptyBlockPoint() {
         int emptyX = 0;
         int emptyY = 0;
-        for(int i = 0; i < puzzleSize * puzzleSize; i++) {
-            if(puzzleMap.get(i) == 0) {
+        for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+            if (puzzleMap.get(i) == 0) {
                 emptyX = i % puzzleSize;
                 emptyY = i / puzzleSize;
                 break;
@@ -82,7 +83,6 @@ public class PuzzleBoard {
 
     public int getStep() {
         return step;
-
     }
 
     public int getF(int heuristics) {
@@ -133,7 +133,7 @@ public class PuzzleBoard {
         for (int i = 0; i < puzzleSize * puzzleSize; i++) {
             id = previousBoard.puzzleMap.get(i);
             PuzzleBlock puzzleBlock = new PuzzleBlock(context, id, (i % puzzleSize) * blockSize,
-                (i / puzzleSize) * blockSize, blockSize, textSize);
+                    (i / puzzleSize) * blockSize, blockSize, textSize);
             puzzleBlocksArr.add(puzzleBlock);
         }
     }
@@ -170,7 +170,7 @@ public class PuzzleBoard {
 
     private void makeMove(int i, int j, int emptyX, int emptyY) {
         swapBlocks(Utils.xyToIndex(i, j, puzzleSize),
-            Utils.xyToIndex(emptyX, emptyY, puzzleSize));
+                Utils.xyToIndex(emptyX, emptyY, puzzleSize));
 //        if (isGoal()) {
 //            new AlertDialog.Builder(context, R.style.DialogTheme)
 //                .setTitle("Congratulations!")
@@ -190,7 +190,7 @@ public class PuzzleBoard {
             int emptyX = getEmptyBlockPoint().x;
             int emptyY = getEmptyBlockPoint().y;
 
-            if (emptyX+ 1 < puzzleSize) {
+            if (emptyX + 1 < puzzleSize) {
                 options.add(new Point(emptyX + 1, emptyY));
             }
             if (emptyX - 1 >= 0) {
@@ -205,7 +205,7 @@ public class PuzzleBoard {
             Collections.shuffle(options);
             Point selectedPoint = options.get(0);
             swapBlocks(Utils.xyToIndex(selectedPoint.x, selectedPoint.y, puzzleSize),
-                Utils.xyToIndex(emptyX, emptyY, puzzleSize));
+                    Utils.xyToIndex(emptyX, emptyY, puzzleSize));
         }
     }
 
@@ -223,8 +223,8 @@ public class PuzzleBoard {
         ArrayList<PuzzleBoard> result = new ArrayList<>();
         int emptyBlockX = 0;
         int emptyBlockY = 0;
-        for(int i = 0; i < puzzleSize * puzzleSize; i++) {
-            if(puzzleMap.get(i) == 0) {
+        for (int i = 0; i < puzzleSize * puzzleSize; i++) {
+            if (puzzleMap.get(i) == 0) {
                 emptyBlockX = i % puzzleSize;
                 emptyBlockY = i / puzzleSize;
                 break;
@@ -236,21 +236,21 @@ public class PuzzleBoard {
             if (neighbourX >= 0 && neighbourX < puzzleSize && neighbourY >= 0 && neighbourY < puzzleSize) {
                 PuzzleBoard neighbourBoard = new PuzzleBoard(this, step);
                 neighbourBoard.swapBlocks((Utils.xyToIndex(neighbourX, neighbourY, puzzleSize)),
-                    Utils.xyToIndex(emptyBlockX, emptyBlockY, puzzleSize));
+                        Utils.xyToIndex(emptyBlockX, emptyBlockY, puzzleSize));
                 result.add(neighbourBoard);
             }
         }
         return result;
     }
 
-    public boolean isGoal()  {
+    public boolean isGoal() {
         return puzzleMap.equals(goalMap);
     }
 
     public int manhattan() {
         int distance = 0;
-        
-        for(Integer node : puzzleMap) {
+
+        for (Integer node : puzzleMap) {
             if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
                 int xGoal = goalMap.indexOf(node) / puzzleSize;
                 int yGoal = goalMap.indexOf(node) % puzzleSize;
@@ -265,7 +265,7 @@ public class PuzzleBoard {
     public int euclidean() {
         int distance = 0;
 
-        for(Integer node : puzzleMap) {
+        for (Integer node : puzzleMap) {
             if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
                 int xGoal = goalMap.indexOf(node) / puzzleSize;
                 int yGoal = goalMap.indexOf(node) % puzzleSize;
@@ -279,9 +279,9 @@ public class PuzzleBoard {
 
     public int blocksOutOfRowAndColumn() {
         int dist = 0;
-        for(Integer node : puzzleMap) {
+        for (Integer node : puzzleMap) {
             if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
-                int goalNodeIndex =  goalMap.indexOf(node);
+                int goalNodeIndex = goalMap.indexOf(node);
                 int puzzleNodeIndex = puzzleMap.indexOf(node);
                 if (puzzleNodeIndex / puzzleSize != goalNodeIndex / puzzleSize) {
                     dist++;
@@ -294,13 +294,13 @@ public class PuzzleBoard {
         return dist;
     }
 
-   public int linearConflict() {
-       int dist = 0;
-       dist = manhattan();
-       dist += linearVerticalConflict();
-       dist += linearHorizontalConflict();
-       return dist;
-   }
+    public int linearConflict() {
+        int dist = 0;
+        dist = manhattan();
+        dist += linearVerticalConflict();
+        dist += linearHorizontalConflict();
+        return dist;
+    }
 
     private int linearVerticalConflict() {
         int linearConflict = 0;
@@ -308,7 +308,7 @@ public class PuzzleBoard {
         for (int row = 0; row < puzzleSize; row++) {
             int max = -1;
             for (int col = 0; col < puzzleSize; col++) {
-                int value =  puzzleMap.get(index);
+                int value = puzzleMap.get(index);
                 index++;
                 if (value != 0 && (value - 1) / puzzleSize == row) {
                     if (value > max) {
@@ -328,7 +328,7 @@ public class PuzzleBoard {
         for (int col = 0; col < puzzleSize; col++) {
             int max = -1;
             for (int row = 0; row < puzzleSize; row++) {
-                int value =  puzzleMap.get(index);
+                int value = puzzleMap.get(index);
                 index++;
                 if (value != 0 && value % puzzleSize == col + 1) {
                     if (value > max) {
@@ -344,7 +344,7 @@ public class PuzzleBoard {
 
     public int misplacedBlocks() {
         int count = 0;
-        for(Integer node : puzzleMap) {
+        for (Integer node : puzzleMap) {
             if (node != 0 && goalMap.indexOf(node) != puzzleMap.indexOf(node)) {
                 count++;
             }

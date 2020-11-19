@@ -1,118 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-	<com.google.android.material.appbar.AppBarLayout
-		android:id="@+id/toolbar_layout_board"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:theme="@style/BackToolbar">
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_layout_board"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/BackToolbar">
 
-		<androidx.appcompat.widget.Toolbar
-			android:id="@+id/toolbar_board"
-			android:layout_width="match_parent"
-			android:layout_height="?attr/actionBarSize"
-			app:popupTheme="@style/AppTheme.PopupOverlay"
-			app:title="Puzzle board">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_board"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="Puzzle board">
 
-		</androidx.appcompat.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
-	</com.google.android.material.appbar.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
-	<androidx.constraintlayout.widget.ConstraintLayout
-		android:id="@+id/buttons"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="10dp"
-		android:paddingStart="10dp"
-		android:paddingEnd="10dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp">
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/btn_shuffle"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="10dp"
-			android:layout_marginEnd="10dp"
-			android:text="@string/btn_shuffle"
-			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintEnd_toStartOf="@id/btn_reset"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_shuffle"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/btn_shuffle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_reset"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/btn_reset"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="10dp"
-			android:layout_marginEnd="10dp"
-			android:text="@string/btn_reset"
-			app:layout_constraintStart_toEndOf="@id/btn_shuffle"
-			app:layout_constraintEnd_toStartOf="@id/btn_solve"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_reset"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/btn_reset"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_solve"
+            app:layout_constraintStart_toEndOf="@id/btn_shuffle"
+            app:layout_constraintTop_toTopOf="parent" />
 
-		<com.google.android.material.button.MaterialButton
-			android:id="@+id/btn_solve"
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="10dp"
-			android:layout_marginEnd="10dp"
-			android:text="@string/btn_solve"
-			app:layout_constraintStart_toEndOf="@id/btn_reset"
-			app:layout_constraintEnd_toEndOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:strokeColor="@color/primaryDarkColor"
-			style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_solve"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/btn_solve"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_reset"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/primaryDarkColor" />
 
-	</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-	<androidx.constraintlayout.widget.ConstraintLayout
-		android:id="@+id/cl_puzzle_container"
-		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:layout_marginTop="10dp"
-		android:layout_marginStart="20dp"
-		android:layout_marginEnd="20dp">
-	</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_puzzle_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_weight="1" />
 
-	<com.google.android.material.button.MaterialButton
-		android:id="@+id/btn_show_steps"
-		android:layout_width="155dp"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="20dp"
-		android:layout_marginEnd="20dp"
-		android:layout_marginBottom="20dp"
-		android:text="@string/btn_show_steps"
-		android:layout_gravity="center_horizontal"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_show_steps"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/btn_show_steps" />
 
-	<TextView
-		android:id="@+id/tv_steps"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="20dp"
-		android:layout_marginEnd="20dp" />
+    <TextView
+        android:id="@+id/tv_steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
 
-	<TextView
-		android:id="@+id/tv_complexity_in_time"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="20dp"
-		android:layout_marginEnd="20dp" />
+    <TextView
+        android:id="@+id/tv_complexity_in_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
 
-	<TextView
-		android:id="@+id/tv_complexity_in_size"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="20dp"
-		android:layout_marginEnd="20dp"
-		android:layout_marginBottom="20dp"/>
+    <TextView
+        android:id="@+id/tv_complexity_in_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp" />
 
 </LinearLayout>

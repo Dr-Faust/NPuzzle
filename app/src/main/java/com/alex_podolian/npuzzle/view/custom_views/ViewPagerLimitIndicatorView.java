@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 
 import com.alex_podolian.npuzzle.R;
 
-
 public class ViewPagerLimitIndicatorView extends View {
     private static final int RE_DRAW = 1;
     private static final int ANIMATE_DELAY = 8;

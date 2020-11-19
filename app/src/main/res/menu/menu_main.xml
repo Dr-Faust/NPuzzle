@@ -1,13 +1,12 @@
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".mvp.view.MainActivity">
 
     <item
         android:id="@+id/action_game_mode"
-        android:title="Game mode"
         android:orderInCategory="1"
+        android:title="@string/game_mode"
         app:showAsAction="never" />
 
 </menu>

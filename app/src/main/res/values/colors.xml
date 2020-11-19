@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="primaryColor">#33691e</color>
-	<color name="primaryLightColor">#629749</color>
-	<color name="primaryDarkColor">#003d00</color>
-	<color name="primaryTextColor">#000000</color>
-	<color name="white">#FFFFFF</color>
-	<color name="backgroundColor">#66f1f8e9</color>
-	<color name="blockColor">#99aed581</color>
+    <color name="primaryColor">#33691e</color>
+    <color name="primaryLightColor">#629749</color>
+    <color name="primaryDarkColor">#003d00</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="backgroundColor">#66f1f8e9</color>
+    <color name="blockColor">#99aed581</color>
 
-	<color name="gameBackground">#FAFAFA</color>
-	<color name="puzzleBlock">#BBDEFB</color>
-	<color name="puzzleBlockText">#025da9</color>
+    <color name="gameBackground">#FAFAFA</color>
+    <color name="puzzleBlock">#BBDEFB</color>
+    <color name="puzzleBlockText">#025da9</color>
 </resources>
